@@ -58,6 +58,7 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
   const canvasRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(layers[0]?.id ?? null);
   const [dragState, setDragState] = useState<{ id: string; offsetX: number; offsetY: number } | null>(null);
+  const [showSafeArea, setShowSafeArea] = useState(true);
 
   const selected = layers.find((l) => l.id === selectedId);
 
