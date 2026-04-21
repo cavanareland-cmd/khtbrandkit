@@ -86,6 +86,7 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
       italic: false,
       align: "center",
       width: 80,
+      lineHeight: 1.15,
     };
     onChange([...layers, newLayer]);
     setSelectedId(id);
