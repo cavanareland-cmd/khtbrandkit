@@ -1,15 +1,40 @@
+import { useState } from "react";
 import logo from "@/assets/karin-logo.png";
 import { Sparkles } from "lucide-react";
+import { useBrandKit } from "@/hooks/useBrandKit";
+import EditButton from "./admin/EditButton";
+import IdentityEditor from "./admin/IdentityEditor";
 
 const Hero = () => {
+  const { entries } = useBrandKit("identity");
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const get = (key: string, fallback = "") =>
+    (entries.find((e) => e.key === key)?.data as { value?: string })?.value ?? fallback;
+
+  const tagPills = entries
+    .filter((e) => e.key === "tag_pill")
+    .map((e) => (e.data as { value?: string }).value)
+    .filter(Boolean) as string[];
+
+  const namePrimary = get("brand_name_primary", "PT Karin");
+  const nameSecondary = get("brand_name_secondary", "Hidayah Tour");
+  const category = get("category_label", "Travel Umrah & Haji");
+  const badge = get("badge_label", "Brand Identity Guidelines");
+  const tagline = get("tagline", "Pelayanan Umrah yang Amanah, Khidmat, dan Nyaman bagi Setiap Tamu Allah.");
+
   return (
     <section id="hero" className="relative overflow-hidden bg-gradient-soft">
       <div className="absolute inset-0 bg-gradient-radial" />
       <div className="absolute inset-0 arabesque-pattern opacity-60" />
-      
+
       {/* Decorative ornaments */}
       <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-secondary/5 blur-3xl" />
+
+      <div className="absolute top-6 right-6 z-10">
+        <EditButton onClick={() => setEditorOpen(true)} label="Edit Identitas" />
+      </div>
 
       <div className="container relative py-20 md:py-32">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -17,29 +42,27 @@ const Hero = () => {
           <div className="space-y-8 animate-fade-up">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-alt font-medium uppercase tracking-[0.2em] text-primary">
               <Sparkles className="h-3 w-3" />
-              Brand Identity Guidelines
+              {badge}
             </div>
 
             <div className="space-y-4">
               <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
-                <span className="text-secondary">PT Karin</span>
+                <span className="text-secondary">{namePrimary}</span>
                 <br />
-                <span className="text-primary italic">Hidayah Tour</span>
+                <span className="text-primary italic">{nameSecondary}</span>
               </h1>
               <div className="flex items-center gap-3">
                 <div className="h-px w-12 bg-accent" />
-                <p className="font-alt text-sm uppercase tracking-[0.3em] text-secondary/70">
-                  Travel Umrah & Haji
-                </p>
+                <p className="font-alt text-sm uppercase tracking-[0.3em] text-secondary/70">{category}</p>
               </div>
             </div>
 
             <p className="text-xl md:text-2xl font-display italic text-foreground/80 leading-relaxed max-w-xl">
-              "Pelayanan Umrah yang <span className="text-primary font-semibold not-italic">Amanah</span>, Khidmat, dan <span className="text-secondary font-semibold not-italic">Nyaman</span> bagi Setiap Tamu Allah."
+              "{tagline}"
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
-              {["Amanah", "Khidmat", "Profesional", "Berpengalaman"].map((tag) => (
+              {tagPills.map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-foreground/80 shadow-sm"
@@ -67,6 +90,8 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      <IdentityEditor open={editorOpen} onOpenChange={setEditorOpen} />
     </section>
   );
 };
