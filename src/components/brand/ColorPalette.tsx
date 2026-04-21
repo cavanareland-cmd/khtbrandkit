@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { useBrandKit } from "@/hooks/useBrandKit";
+import EditButton from "./admin/EditButton";
+import ColorEditor from "./admin/ColorEditor";
 
 type Color = {
   name: string;
@@ -11,36 +14,6 @@ type Color = {
   textOn?: "light" | "dark";
   category: "primary" | "secondary" | "accent" | "neutral";
 };
-
-const colors: Color[] = [
-  { name: "Maroon Deep", role: "Primary Deep", hex: "#5C0A18", rgb: "92, 10, 24", hsl: "354 80% 22%", textOn: "light", category: "primary" },
-  { name: "Maroon", role: "Primary", hex: "#8E1428", rgb: "142, 20, 40", hsl: "354 75% 32%", textOn: "light", category: "primary" },
-  { name: "Maroon Glow", role: "Primary Glow", hex: "#C13449", rgb: "193, 52, 73", hsl: "354 70% 45%", textOn: "light", category: "primary" },
-  { name: "Navy Deep", role: "Secondary", hex: "#101F4C", rgb: "16, 31, 76", hsl: "220 65% 18%", textOn: "light", category: "secondary" },
-  { name: "Navy", role: "Secondary Glow", hex: "#22386F", rgb: "34, 56, 111", hsl: "220 55% 30%", textOn: "light", category: "secondary" },
-  { name: "Royal Gold", role: "Accent", hex: "#C99A3F", rgb: "201, 154, 63", hsl: "38 55% 52%", textOn: "dark", category: "accent" },
-  { name: "Gold Soft", role: "Accent Soft", hex: "#F5E6C5", rgb: "245, 230, 197", hsl: "38 70% 88%", textOn: "dark", category: "accent" },
-  { name: "Ivory", role: "Background", hex: "#FBF8F3", rgb: "251, 248, 243", hsl: "40 33% 98%", textOn: "dark", category: "neutral" },
-  { name: "Stone", role: "Muted", hex: "#EFEBE3", rgb: "239, 235, 227", hsl: "40 20% 94%", textOn: "dark", category: "neutral" },
-  { name: "Ink", role: "Foreground", hex: "#111A2C", rgb: "17, 26, 44", hsl: "220 45% 12%", textOn: "light", category: "neutral" },
-];
-
-const tailwindSnippet = `// tailwind.config.ts
-colors: {
-  primary: {
-    DEFAULT: "hsl(354 75% 32%)",  // Maroon
-    deep: "hsl(354 80% 22%)",
-    glow: "hsl(354 70% 45%)",
-  },
-  secondary: {
-    DEFAULT: "hsl(220 65% 18%)",  // Navy
-    glow: "hsl(220 55% 30%)",
-  },
-  accent: {
-    DEFAULT: "hsl(38 55% 52%)",   // Gold
-    soft: "hsl(38 70% 88%)",
-  },
-}`;
 
 const ColorCard = ({ color }: { color: Color }) => {
   const [copied, setCopied] = useState(false);
@@ -57,10 +30,7 @@ const ColorCard = ({ color }: { color: Color }) => {
       onClick={handleCopy}
       className="group relative overflow-hidden rounded-2xl border border-border bg-card text-left transition-smooth hover:shadow-elegant hover:-translate-y-1"
     >
-      <div
-        className="relative h-36 w-full"
-        style={{ backgroundColor: color.hex }}
-      >
+      <div className="relative h-36 w-full" style={{ backgroundColor: color.hex }}>
         <div className={`absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth ${color.textOn === "light" ? "text-white" : "text-foreground"}`}>
           {copied ? <Check className="h-8 w-8" /> : <Copy className="h-7 w-7" />}
         </div>
@@ -78,7 +48,12 @@ const ColorCard = ({ color }: { color: Color }) => {
 };
 
 const ColorPalette = () => {
+  const { entries } = useBrandKit("color");
   const [snippetCopied, setSnippetCopied] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const colors: Color[] = entries.map((e) => e.data as unknown as Color);
+
   const groups = [
     { title: "Warna Utama", subtitle: "Primary — Maroon", cat: "primary" as const },
     { title: "Warna Sekunder", subtitle: "Secondary — Navy", cat: "secondary" as const },
@@ -86,31 +61,62 @@ const ColorPalette = () => {
     { title: "Netral", subtitle: "Neutrals", cat: "neutral" as const },
   ];
 
+  // Build dynamic Tailwind snippet from current palette
+  const primary = colors.find((c) => c.role === "Primary");
+  const primaryDeep = colors.find((c) => c.role === "Primary Deep");
+  const primaryGlow = colors.find((c) => c.role === "Primary Glow");
+  const secondary = colors.find((c) => c.role === "Secondary");
+  const secondaryGlow = colors.find((c) => c.role === "Secondary Glow");
+  const accent = colors.find((c) => c.role === "Accent");
+  const accentSoft = colors.find((c) => c.role === "Accent Soft");
+
+  const tailwindSnippet = `// tailwind.config.ts
+colors: {
+  primary: {
+    DEFAULT: "hsl(${primary?.hsl ?? "354 75% 32%"})",
+    deep: "hsl(${primaryDeep?.hsl ?? "354 80% 22%"})",
+    glow: "hsl(${primaryGlow?.hsl ?? "354 70% 45%"})",
+  },
+  secondary: {
+    DEFAULT: "hsl(${secondary?.hsl ?? "220 65% 18%"})",
+    glow: "hsl(${secondaryGlow?.hsl ?? "220 55% 30%"})",
+  },
+  accent: {
+    DEFAULT: "hsl(${accent?.hsl ?? "38 55% 52%"})",
+    soft: "hsl(${accentSoft?.hsl ?? "38 70% 88%"})",
+  },
+}`;
+
   return (
-    <section id="colors" className="py-24 bg-background">
+    <section id="colors" className="py-24 bg-background relative">
       <div className="container">
-        <div className="max-w-2xl mb-16">
-          <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">02 — Color System</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Palet Warna</h2>
-          <p className="text-lg text-muted-foreground">
-            Warna brand mencerminkan keagungan, kepercayaan, dan kehangatan dalam pelayanan ibadah. Klik kartu untuk menyalin kode warna.
-          </p>
+        <div className="max-w-2xl mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">02 — Color System</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Palet Warna</h2>
+            <p className="text-lg text-muted-foreground">
+              Warna brand mencerminkan keagungan, kepercayaan, dan kehangatan dalam pelayanan ibadah. Klik kartu untuk menyalin kode warna.
+            </p>
+          </div>
+          <EditButton onClick={() => setEditorOpen(true)} label="Edit Warna" />
         </div>
 
-        <div className="space-y-12">
-          {groups.map((g) => (
-            <div key={g.cat}>
-              <div className="flex items-baseline gap-4 mb-6">
-                <h3 className="font-display text-2xl font-semibold text-foreground">{g.title}</h3>
-                <span className="font-alt text-xs uppercase tracking-widest text-muted-foreground">{g.subtitle}</span>
+        <div className="space-y-12 mt-8">
+          {groups.map((g) => {
+            const list = colors.filter((c) => c.category === g.cat);
+            if (list.length === 0) return null;
+            return (
+              <div key={g.cat}>
+                <div className="flex items-baseline gap-4 mb-6">
+                  <h3 className="font-display text-2xl font-semibold text-foreground">{g.title}</h3>
+                  <span className="font-alt text-xs uppercase tracking-widest text-muted-foreground">{g.subtitle}</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                  {list.map((c) => <ColorCard key={c.hex + c.name} color={c} />)}
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                {colors.filter((c) => c.category === g.cat).map((c) => (
-                  <ColorCard key={c.hex} color={c} />
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Tailwind Snippet */}
@@ -142,6 +148,8 @@ const ColorPalette = () => {
           </pre>
         </div>
       </div>
+
+      <ColorEditor open={editorOpen} onOpenChange={setEditorOpen} />
     </section>
   );
 };

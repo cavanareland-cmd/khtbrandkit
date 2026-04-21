@@ -1,49 +1,52 @@
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Check, X, Heart, Shield, Sparkles, Users } from "lucide-react";
+import { Check, X, Heart, Shield, Sparkles, Users, Star, Award, BookOpen, Compass } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { useBrandKit } from "@/hooks/useBrandKit";
+import EditButton from "./admin/EditButton";
+import VoiceEditor from "./admin/VoiceEditor";
 
-const personality = [
-  { icon: Shield, title: "Amanah", desc: "Setiap janji ditepati. Setiap dana dikelola dengan penuh tanggung jawab dan transparansi." },
-  { icon: Heart, title: "Khidmat", desc: "Pelayanan dengan ketulusan hati, menghormati setiap jamaah sebagai tamu Allah." },
-  { icon: Sparkles, title: "Profesional", desc: "Standar pelayanan tinggi, sistematis, dan terstruktur dari awal hingga akhir perjalanan." },
-  { icon: Users, title: "Hangat", desc: "Komunikasi penuh kekeluargaan — jamaah bukan sekadar pelanggan, tapi keluarga." },
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Shield, Heart, Sparkles, Users, Star, Award, BookOpen, Compass,
+};
 
-const voiceExamples = [
-  {
-    label: "Yang Kami Katakan",
-    items: [
-      "Mantapkan niat ibadah Anda bersama KHT.",
-      "Pendampingan penuh selama perjalanan suci Anda.",
-      "Insya Allah, perjalanan Anda akan berkah dan nyaman.",
-    ],
-    type: "do",
-  },
-  {
-    label: "Yang Kami Hindari",
-    items: [
-      "Promo gila-gilaan! Murah meriah!",
-      "Beli sekarang sebelum kehabisan!!!",
-      "Paket termurah se-Indonesia, dijamin!",
-    ],
-    type: "dont",
-  },
-];
+type Personality = { icon: string; title: string; desc: string };
+type Usage = { q: string; do: string[]; dont: string[] };
 
 const BrandVoice = () => {
+  const personality = useBrandKit("voice_personality");
+  const voiceDo = useBrandKit("voice_do");
+  const voiceDont = useBrandKit("voice_dont");
+  const usage = useBrandKit("voice_usage");
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const personalityList: Personality[] = personality.entries.map((e) => e.data as unknown as Personality);
+  const doList = voiceDo.entries.map((e) => (e.data as { text: string }).text);
+  const dontList = voiceDont.entries.map((e) => (e.data as { text: string }).text);
+  const usageList: Usage[] = usage.entries.map((e) => e.data as unknown as Usage);
+
+  const voiceExamples = [
+    { label: "Yang Kami Katakan", items: doList, type: "do" as const },
+    { label: "Yang Kami Hindari", items: dontList, type: "dont" as const },
+  ];
+
   return (
     <section id="voice" className="py-24 bg-gradient-soft relative overflow-hidden">
       <div className="absolute inset-0 arabesque-pattern opacity-50" />
       <div className="container relative">
-        <div className="max-w-2xl mb-16">
-          <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">05 — Brand Voice</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Panduan Gaya & Suara</h2>
-          <p className="text-lg text-muted-foreground">
-            Cara KHT berkomunikasi dengan jamaah — penuh hormat, jelas, dan menenangkan.
-          </p>
+        <div className="max-w-2xl mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">05 — Brand Voice</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Panduan Gaya & Suara</h2>
+            <p className="text-lg text-muted-foreground">
+              Cara KHT berkomunikasi dengan jamaah — penuh hormat, jelas, dan menenangkan.
+            </p>
+          </div>
+          <EditButton onClick={() => setEditorOpen(true)} label="Edit Voice" />
         </div>
 
-        <Tabs defaultValue="personality" className="w-full">
+        <Tabs defaultValue="personality" className="w-full mt-8">
           <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-3 bg-card border border-border p-1.5 h-auto rounded-full shadow-md mb-10">
             <TabsTrigger value="personality" className="rounded-full font-alt text-xs uppercase tracking-widest data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-elegant px-6 py-2.5">
               Kepribadian
@@ -58,8 +61,8 @@ const BrandVoice = () => {
 
           <TabsContent value="personality" className="mt-0">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {personality.map((p) => {
-                const Icon = p.icon;
+              {personalityList.map((p) => {
+                const Icon = ICON_MAP[p.icon] ?? Sparkles;
                 return (
                   <div key={p.title} className="group rounded-2xl bg-card border border-border p-7 shadow-md hover:shadow-elegant hover:-translate-y-1 transition-smooth">
                     <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center mb-5 shadow-elegant group-hover:scale-110 transition-smooth">
@@ -109,28 +112,7 @@ const BrandVoice = () => {
           <TabsContent value="usage" className="mt-0">
             <div className="rounded-2xl bg-card border border-border shadow-md overflow-hidden">
               <Accordion type="single" collapsible className="w-full">
-                {[
-                  {
-                    q: "Penggunaan Logo yang Benar",
-                    do: ["Selalu sediakan ruang kosong (clear space) minimal setara dengan tinggi logo.", "Gunakan versi berwarna pada latar terang, versi putih pada latar gelap.", "Pertahankan proporsi asli logo saat memperbesar atau memperkecil."],
-                    dont: ["Jangan mengubah warna, memutar, atau mendistorsi logo.", "Jangan menempatkan logo pada latar yang ramai atau low-contrast.", "Jangan menambahkan efek bayangan, glow, atau outline pada logo."],
-                  },
-                  {
-                    q: "Penggunaan Warna",
-                    do: ["Gunakan Maroon sebagai warna dominan untuk elemen utama.", "Navy untuk hierarki kedua dan teks heading.", "Gold sebagai aksen — gunakan secukupnya untuk highlight."],
-                    dont: ["Jangan mencampur warna brand dengan warna pesaing atau warna yang bertabrakan.", "Hindari penggunaan warna neon atau saturasi tinggi yang tidak ada di palet.", "Jangan gunakan warna primary di atas warna primary (no-contrast)."],
-                  },
-                  {
-                    q: "Penggunaan Tipografi",
-                    do: ["Playfair Display untuk judul utama saja.", "Inter untuk semua body text dan UI.", "Montserrat dengan tracking lebar untuk label dan caption."],
-                    dont: ["Jangan menggunakan lebih dari 3 ukuran font berbeda dalam satu desain.", "Hindari penggunaan font dekoratif di luar trio brand.", "Jangan gunakan all-caps untuk paragraf panjang."],
-                  },
-                  {
-                    q: "Bahasa & Komunikasi",
-                    do: ["Gunakan kata 'Bismillah', 'Insya Allah', 'Barakallah' secara natural dan tepat konteks.", "Sapa jamaah dengan 'Bapak/Ibu' dengan hormat.", "Jelaskan layanan dengan jelas, tanpa janji berlebihan."],
-                    dont: ["Hindari clickbait, hard-selling, dan bahasa hiperbola.", "Jangan gunakan bahasa gaul atau singkatan tidak baku di komunikasi resmi.", "Jangan membandingkan secara negatif dengan kompetitor."],
-                  },
-                ].map((item, i) => (
+                {usageList.map((item, i) => (
                   <AccordionItem key={i} value={`item-${i}`} className="border-b border-border last:border-0 px-6">
                     <AccordionTrigger className="font-display text-lg font-semibold hover:text-primary py-6">
                       {item.q}
@@ -142,7 +124,7 @@ const BrandVoice = () => {
                             <Check className="h-4 w-4" /> Boleh
                           </p>
                           <ul className="space-y-2">
-                            {item.do.map((d, j) => (
+                            {(item.do ?? []).map((d, j) => (
                               <li key={j} className="text-sm text-foreground/80 flex gap-2">
                                 <span className="text-primary mt-1">✓</span>{d}
                               </li>
@@ -154,7 +136,7 @@ const BrandVoice = () => {
                             <X className="h-4 w-4" /> Tidak Boleh
                           </p>
                           <ul className="space-y-2">
-                            {item.dont.map((d, j) => (
+                            {(item.dont ?? []).map((d, j) => (
                               <li key={j} className="text-sm text-foreground/60 flex gap-2">
                                 <span className="text-destructive mt-1">✗</span>{d}
                               </li>
@@ -170,6 +152,8 @@ const BrandVoice = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <VoiceEditor open={editorOpen} onOpenChange={setEditorOpen} />
     </section>
   );
 };

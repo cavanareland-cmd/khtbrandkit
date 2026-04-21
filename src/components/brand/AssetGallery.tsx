@@ -1,6 +1,11 @@
-import logo from "@/assets/karin-logo.png";
-import { Download, Plane, Building2, Bus, Compass, BookOpen, MapPin } from "lucide-react";
+import { useState } from "react";
+import defaultLogo from "@/assets/karin-logo.png";
+import { Download, Plane, Building2, Bus, Compass, BookOpen, MapPin, Star, Camera, Globe, Hotel, Shield } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useBrandKit } from "@/hooks/useBrandKit";
+import EditButton from "./admin/EditButton";
+import AssetEditor from "./admin/AssetEditor";
 
 const handleDownload = (name: string) => {
   toast.success(`Download ${name}`, { description: "Placeholder — file akan diunduh." });
@@ -16,62 +21,45 @@ const KaabaIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const logoVariants = [
-  {
-    title: "Logo Penuh",
-    subtitle: "Primary Mark",
-    bg: "bg-card",
-    border: "border-border",
-    inverse: false,
-  },
-  {
-    title: "Versi Putih",
-    subtitle: "On Dark Background",
-    bg: "bg-secondary",
-    border: "border-secondary",
-    inverse: true,
-  },
-  {
-    title: "Versi Maroon",
-    subtitle: "On Light Background",
-    bg: "bg-accent-soft",
-    border: "border-accent/30",
-    inverse: false,
-  },
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Plane, Building2, Bus, Compass, BookOpen, MapPin, Star, Camera, Globe, Hotel, Shield,
+};
 
-const icons = [
-  { icon: KaabaIcon, name: "Ka'bah", desc: "Holy Site" },
-  { icon: Plane, name: "Pesawat", desc: "Transportation" },
-  { icon: Building2, name: "Hotel", desc: "Accommodation" },
-  { icon: Bus, name: "Bus", desc: "Ground Transport" },
-  { icon: Compass, name: "Manasik", desc: "Guidance" },
-  { icon: BookOpen, name: "E-Guide", desc: "Digital Material" },
-  { icon: MapPin, name: "Tour Spot", desc: "Locations" },
-];
+type LogoVariant = { title: string; subtitle: string; bg: string; border: string; inverse: boolean; image_url: string | null };
+type IconItem = { icon: string; name: string; desc: string };
 
 const AssetGallery = () => {
+  const logos = useBrandKit("asset_logo");
+  const icons = useBrandKit("asset_icon");
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const logoVariants: LogoVariant[] = logos.entries.map((e) => e.data as unknown as LogoVariant);
+  const iconList: IconItem[] = icons.entries.map((e) => e.data as unknown as IconItem);
+
   return (
-    <section id="assets" className="py-24 bg-background">
+    <section id="assets" className="py-24 bg-background relative">
       <div className="container">
-        <div className="max-w-2xl mb-16">
-          <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">04 — Visual Assets</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Galeri Aset</h2>
-          <p className="text-lg text-muted-foreground">
-            Variasi logo dan ikonografi yang konsisten — siap digunakan di semua media komunikasi brand.
-          </p>
+        <div className="max-w-2xl mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">04 — Visual Assets</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Galeri Aset</h2>
+            <p className="text-lg text-muted-foreground">
+              Variasi logo dan ikonografi yang konsisten — siap digunakan di semua media komunikasi brand.
+            </p>
+          </div>
+          <EditButton onClick={() => setEditorOpen(true)} label="Edit Aset" />
         </div>
 
         {/* Logo Variants */}
-        <h3 className="font-display text-2xl font-semibold text-foreground mb-6">Variasi Logo</h3>
+        <h3 className="font-display text-2xl font-semibold text-foreground mb-6 mt-8">Variasi Logo</h3>
         <div className="grid md:grid-cols-3 gap-6 mb-20">
           {logoVariants.map((v) => (
             <div key={v.title} className={`group rounded-2xl ${v.bg} ${v.border} border overflow-hidden shadow-md hover:shadow-elegant transition-smooth`}>
               <div className="aspect-square flex items-center justify-center p-12 relative">
                 <img
-                  src={logo}
+                  src={v.image_url || defaultLogo}
                   alt={v.title}
-                  className={`w-full h-full object-contain transition-smooth group-hover:scale-105 ${v.inverse ? "brightness-0 invert" : ""}`}
+                  className={`w-full h-full object-contain transition-smooth group-hover:scale-105 ${v.inverse && !v.image_url ? "brightness-0 invert" : ""}`}
                 />
                 <div className={`absolute top-4 left-4 text-[10px] font-alt uppercase tracking-widest ${v.inverse ? "text-secondary-foreground/60" : "text-muted-foreground"}`}>
                   {v.subtitle}
@@ -104,8 +92,8 @@ const AssetGallery = () => {
           <p className="font-alt text-xs uppercase tracking-widest text-muted-foreground">Line Art · 2px Stroke · Konsisten</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          {icons.map((item) => {
-            const Icon = item.icon;
+          {iconList.map((item) => {
+            const Icon = item.icon === "Kaaba" ? KaabaIcon : (ICON_MAP[item.icon] ?? Star);
             return (
               <div
                 key={item.name}
@@ -127,6 +115,8 @@ const AssetGallery = () => {
           })}
         </div>
       </div>
+
+      <AssetEditor open={editorOpen} onOpenChange={setEditorOpen} />
     </section>
   );
 };
