@@ -18,9 +18,13 @@ export type TextLayer = {
   italic: boolean;
   align: "left" | "center" | "right";
   width: number; // % of canvas
+  lineHeight?: number; // multiplier, default 1.15
   bgColor?: string;
   bgOpacity?: number;
 };
+
+// Safe area margin in % (industry-standard ~5% inner padding)
+export const SAFE_AREA_PERCENT = 5;
 
 const FORMAT_DIMENSIONS: Record<string, { w: number; h: number; label: string }> = {
   a4_portrait: { w: 794, h: 1123, label: "A4 Portrait" },
