@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { useBrandKit } from "@/hooks/useBrandKit";
+import EditButton from "./admin/EditButton";
+import TypographyEditor from "./admin/TypographyEditor";
+
+type FontEntry = { name: string; role: string; className: string; weight: string; sample: string; desc: string };
 
 const scale = [
   { tag: "H1", size: "60px / 3.75rem", className: "text-6xl font-bold", sample: "Pelayanan Amanah" },
@@ -16,28 +21,34 @@ const bodyScale = [
 ];
 
 const Typography = () => {
+  const { entries } = useBrandKit("typography");
   const [customText, setCustomText] = useState("Bersama KHT, Tunaikan Niat Suci");
   const [activeFont, setActiveFont] = useState<"display" | "body" | "alt">("display");
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const fonts: FontEntry[] = entries.map((e) => e.data as unknown as FontEntry);
+  const displayName = fonts.find((f) => f.className === "font-display")?.name ?? "Playfair";
+  const bodyName = fonts.find((f) => f.className === "font-body")?.name ?? "Inter";
+  const altName = fonts.find((f) => f.className === "font-alt")?.name ?? "Montserrat";
 
   return (
-    <section id="typography" className="py-24 bg-gradient-soft">
+    <section id="typography" className="py-24 bg-gradient-soft relative">
       <div className="container">
-        <div className="max-w-2xl mb-16">
-          <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">03 — Typography</p>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Sistem Tipografi</h2>
-          <p className="text-lg text-muted-foreground">
-            Pasangan font yang elegan: Playfair Display untuk judul yang bermartabat, Inter untuk keterbacaan, Montserrat untuk aksen modern.
-          </p>
+        <div className="max-w-2xl mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">03 — Typography</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Sistem Tipografi</h2>
+            <p className="text-lg text-muted-foreground">
+              Pasangan font yang elegan: {displayName} untuk judul yang bermartabat, {bodyName} untuk keterbacaan, {altName} untuk aksen modern.
+            </p>
+          </div>
+          <EditButton onClick={() => setEditorOpen(true)} label="Edit Tipografi" />
         </div>
 
         {/* Font Families */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {[
-            { name: "Playfair Display", role: "Heading Font", className: "font-display", weight: "400 — 900", sample: "Aa", desc: "Untuk judul, hero, dan momen bermartabat." },
-            { name: "Inter", role: "Body Font", className: "font-body", weight: "300 — 700", sample: "Aa", desc: "Untuk paragraf, UI, dan keterbacaan optimal." },
-            { name: "Montserrat", role: "Accent Font", className: "font-alt", weight: "300 — 700", sample: "Aa", desc: "Untuk label, caption, dan call-to-action." },
-          ].map((f) => (
-            <div key={f.name} className="rounded-2xl bg-card border border-border p-8 shadow-md hover:shadow-elegant transition-smooth group">
+        <div className="grid md:grid-cols-3 gap-6 mb-16 mt-8">
+          {fonts.map((f) => (
+            <div key={f.name + f.className} className="rounded-2xl bg-card border border-border p-8 shadow-md hover:shadow-elegant transition-smooth group">
               <div className={`${f.className} text-8xl text-primary mb-6 leading-none transition-smooth group-hover:scale-105 origin-left`}>
                 {f.sample}
               </div>
@@ -54,7 +65,7 @@ const Typography = () => {
         {/* Type Scale */}
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
           <div className="rounded-2xl bg-card border border-border p-8 shadow-md">
-            <h4 className="font-alt text-xs uppercase tracking-widest text-accent mb-6">Heading Scale — Playfair Display</h4>
+            <h4 className="font-alt text-xs uppercase tracking-widest text-accent mb-6">Heading Scale — {displayName}</h4>
             <div className="space-y-6">
               {scale.map((s) => (
                 <div key={s.tag} className="flex items-baseline justify-between gap-6 border-b border-border/50 pb-4 last:border-0">
@@ -71,7 +82,7 @@ const Typography = () => {
           </div>
 
           <div className="rounded-2xl bg-card border border-border p-8 shadow-md">
-            <h4 className="font-alt text-xs uppercase tracking-widest text-accent mb-6">Body Scale — Inter</h4>
+            <h4 className="font-alt text-xs uppercase tracking-widest text-accent mb-6">Body Scale — {bodyName}</h4>
             <div className="space-y-6">
               {bodyScale.map((s) => (
                 <div key={s.tag} className="border-b border-border/50 pb-4 last:border-0">
@@ -109,7 +120,7 @@ const Typography = () => {
                         : "bg-secondary-glow/40 text-secondary-foreground/70 hover:bg-secondary-glow/60"
                     }`}
                   >
-                    {f === "display" ? "Playfair" : f === "body" ? "Inter" : "Montserrat"}
+                    {f === "display" ? displayName : f === "body" ? bodyName : altName}
                   </button>
                 ))}
               </div>
@@ -131,6 +142,8 @@ const Typography = () => {
           </div>
         </div>
       </div>
+
+      <TypographyEditor open={editorOpen} onOpenChange={setEditorOpen} />
     </section>
   );
 };
