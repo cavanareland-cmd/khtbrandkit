@@ -326,6 +326,15 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
               />
             </div>
 
+            <div className="space-y-1.5">
+              <Label className="text-xs">Line Height: {(selected.lineHeight ?? 1.15).toFixed(2)}</Label>
+              <Slider
+                value={[(selected.lineHeight ?? 1.15) * 100]}
+                min={80} max={250} step={5}
+                onValueChange={(v) => updateLayer(selected.id, { lineHeight: v[0] / 100 })}
+              />
+            </div>
+
             <div className="flex gap-2">
               <Button size="sm" variant={selected.bold ? "default" : "outline"} onClick={() => updateLayer(selected.id, { bold: !selected.bold })} className="flex-1 h-8">
                 <Bold className="h-3 w-3" />
