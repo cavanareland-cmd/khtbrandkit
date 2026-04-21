@@ -192,17 +192,37 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
                   fontWeight: layer.bold ? 700 : 400,
                   fontStyle: layer.italic ? "italic" : "normal",
                   textAlign: layer.align,
-                  lineHeight: 1.15,
+                  lineHeight: layer.lineHeight ?? 1.15,
                   padding: layer.bgColor ? "0.4em 0.8em" : 0,
                   background: layer.bgColor ? `${layer.bgColor}${Math.round((layer.bgOpacity ?? 1) * 255).toString(16).padStart(2, "0")}` : "transparent",
                   textShadow: layer.bgColor ? "none" : "0 2px 8px rgba(0,0,0,0.4)",
                   containerType: "inline-size",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {layer.text || "Teks kosong"}
               </div>
             );
           })}
+
+          {/* Safe area guide */}
+          {showSafeArea && (
+            <div
+              className="absolute pointer-events-none border-2 border-dashed border-accent/60 rounded-sm"
+              style={{
+                top: `${SAFE_AREA_PERCENT}%`,
+                left: `${SAFE_AREA_PERCENT}%`,
+                right: `${SAFE_AREA_PERCENT}%`,
+                bottom: `${SAFE_AREA_PERCENT}%`,
+              }}
+            >
+              <span className="absolute -top-3 left-2 px-1.5 bg-secondary text-accent text-[9px] font-alt uppercase tracking-widest rounded">
+                Safe Area
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
