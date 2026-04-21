@@ -268,6 +268,20 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
           />
         </div>
 
+        <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-card">
+          <div>
+            <Label htmlFor="show-safe" className="text-xs cursor-pointer block">Safe Area Guide</Label>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Pastikan teks dalam batas aman cetak/sosmed</p>
+          </div>
+          <input
+            id="show-safe"
+            type="checkbox"
+            checked={showSafeArea}
+            onChange={(e) => setShowSafeArea(e.target.checked)}
+            className="h-4 w-4 accent-primary"
+          />
+        </div>
+
         {selected && (
           <div className="space-y-4 border border-border rounded-xl p-4 bg-card">
             <p className="font-alt text-[10px] uppercase tracking-widest text-accent">Properti Teks</p>
