@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      brand_kit: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data: Json
+          id: string
+          key: string | null
+          section: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          id?: string
+          key?: string | null
+          section: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          id?: string
+          key?: string | null
+          section?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       creations: {
         Row: {
           ai_brief: Json | null
