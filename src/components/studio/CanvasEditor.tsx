@@ -18,9 +18,13 @@ export type TextLayer = {
   italic: boolean;
   align: "left" | "center" | "right";
   width: number; // % of canvas
+  lineHeight?: number; // multiplier, default 1.15
   bgColor?: string;
   bgOpacity?: number;
 };
+
+// Safe area margin in % (industry-standard ~5% inner padding)
+export const SAFE_AREA_PERCENT = 5;
 
 const FORMAT_DIMENSIONS: Record<string, { w: number; h: number; label: string }> = {
   a4_portrait: { w: 794, h: 1123, label: "A4 Portrait" },
@@ -54,6 +58,7 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
   const canvasRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(layers[0]?.id ?? null);
   const [dragState, setDragState] = useState<{ id: string; offsetX: number; offsetY: number } | null>(null);
+  const [showSafeArea, setShowSafeArea] = useState(true);
 
   const selected = layers.find((l) => l.id === selectedId);
 
@@ -81,6 +86,7 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
       italic: false,
       align: "center",
       width: 80,
+      lineHeight: 1.15,
     };
     onChange([...layers, newLayer]);
     setSelectedId(id);
@@ -186,17 +192,37 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
                   fontWeight: layer.bold ? 700 : 400,
                   fontStyle: layer.italic ? "italic" : "normal",
                   textAlign: layer.align,
-                  lineHeight: 1.15,
+                  lineHeight: layer.lineHeight ?? 1.15,
                   padding: layer.bgColor ? "0.4em 0.8em" : 0,
                   background: layer.bgColor ? `${layer.bgColor}${Math.round((layer.bgOpacity ?? 1) * 255).toString(16).padStart(2, "0")}` : "transparent",
                   textShadow: layer.bgColor ? "none" : "0 2px 8px rgba(0,0,0,0.4)",
                   containerType: "inline-size",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {layer.text || "Teks kosong"}
               </div>
             );
           })}
+
+          {/* Safe area guide */}
+          {showSafeArea && (
+            <div
+              className="absolute pointer-events-none border-2 border-dashed border-accent/60 rounded-sm"
+              style={{
+                top: `${SAFE_AREA_PERCENT}%`,
+                left: `${SAFE_AREA_PERCENT}%`,
+                right: `${SAFE_AREA_PERCENT}%`,
+                bottom: `${SAFE_AREA_PERCENT}%`,
+              }}
+            >
+              <span className="absolute -top-3 left-2 px-1.5 bg-secondary text-accent text-[9px] font-alt uppercase tracking-widest rounded">
+                Safe Area
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -242,6 +268,20 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
           />
         </div>
 
+        <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-card">
+          <div>
+            <Label htmlFor="show-safe" className="text-xs cursor-pointer block">Safe Area Guide</Label>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Pastikan teks dalam batas aman cetak/sosmed</p>
+          </div>
+          <input
+            id="show-safe"
+            type="checkbox"
+            checked={showSafeArea}
+            onChange={(e) => setShowSafeArea(e.target.checked)}
+            className="h-4 w-4 accent-primary"
+          />
+        </div>
+
         {selected && (
           <div className="space-y-4 border border-border rounded-xl p-4 bg-card">
             <p className="font-alt text-[10px] uppercase tracking-widest text-accent">Properti Teks</p>
@@ -283,6 +323,15 @@ export default function CanvasEditor({ format, backgroundUrl, layers, onChange, 
                 value={[selected.width]}
                 min={20} max={100} step={1}
                 onValueChange={(v) => updateLayer(selected.id, { width: v[0] })}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">Line Height: {(selected.lineHeight ?? 1.15).toFixed(2)}</Label>
+              <Slider
+                value={[(selected.lineHeight ?? 1.15) * 100]}
+                min={80} max={250} step={5}
+                onValueChange={(v) => updateLayer(selected.id, { lineHeight: v[0] / 100 })}
               />
             </div>
 

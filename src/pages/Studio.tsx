@@ -324,7 +324,7 @@ const Studio = () => {
 
         // Wrap text
         const lines = wrapText(ctx, layer.text, maxWidth);
-        const lineHeight = layer.fontSize * 1.15;
+        const lineHeight = layer.fontSize * (layer.lineHeight ?? 1.15);
         const totalHeight = lines.length * lineHeight;
         const startY = y - totalHeight / 2 + lineHeight / 2;
 
