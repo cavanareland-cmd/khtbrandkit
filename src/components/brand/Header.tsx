@@ -1,4 +1,6 @@
 import logo from "@/assets/karin-logo.png";
+import { Link } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 
 const Header = () => {
   const links = [
@@ -32,14 +34,13 @@ const Header = () => {
             </a>
           ))}
         </nav>
-        <a
-          href="https://www.karinhidayahtour.com/"
-          target="_blank"
-          rel="noreferrer"
-          className="hidden sm:inline-flex h-10 items-center rounded-full bg-gradient-primary px-5 text-sm font-medium text-primary-foreground shadow-elegant hover:shadow-glow transition-smooth"
+        <Link
+          to="/studio"
+          className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full bg-gradient-primary px-5 text-sm font-medium text-primary-foreground shadow-elegant hover:shadow-glow transition-smooth"
         >
-          Kunjungi Website
-        </a>
+          <Sparkles className="h-3.5 w-3.5" />
+          AI Studio
+        </Link>
       </div>
     </header>
   );
