@@ -8,9 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Sparkles, Loader2, Download, RefreshCcw, ArrowLeft, Copy, ImageIcon, Wand2, LogOut, Image, Hash, FileText } from "lucide-react";
+import { Sparkles, Loader2, Download, RefreshCcw, ArrowLeft, Copy, ImageIcon, Wand2, LogOut, Image, Hash, FileText, LayoutTemplate } from "lucide-react";
 import logo from "@/assets/karin-logo.png";
 import CanvasEditor, { type TextLayer, FORMAT_DIMENSIONS } from "@/components/studio/CanvasEditor";
+import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE } from "@/components/studio/LayeredCanvasEditor";
+import TemplatePicker from "@/components/studio/TemplatePicker";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -77,6 +79,14 @@ const Studio = () => {
   const [showLogo, setShowLogo] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
   const [customImagePrompt, setCustomImagePrompt] = useState("");
+
+  // Template mode state
+  const [studioMode, setStudioMode] = useState<"brief" | "template">("brief");
+  const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; analysis: Record<string, unknown> | null; status: string } | null>(null);
+  const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
+  const [templateGenerating, setTemplateGenerating] = useState(false);
+  const [richLayers, setRichLayers] = useState<Layer[]>([]);
+  const [globalStyle, setGlobalStyle] = useState<GlobalStyle>(DEFAULT_GLOBAL_STYLE);
 
   useEffect(() => {
     document.title = "Studio · Brand Kit · KHT";
