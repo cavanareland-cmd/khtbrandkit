@@ -53,11 +53,14 @@ export type Database = {
           ai_copy: Json | null
           background_image_url: string | null
           created_at: string
+          elements: Json | null
           format: string
+          global_style: Json | null
           id: string
           input_data: Json
           media_type: string
           status: string
+          template_id: string | null
           text_layers: Json | null
           thumbnail_url: string | null
           title: string
@@ -69,11 +72,14 @@ export type Database = {
           ai_copy?: Json | null
           background_image_url?: string | null
           created_at?: string
+          elements?: Json | null
           format: string
+          global_style?: Json | null
           id?: string
           input_data?: Json
           media_type?: string
           status?: string
+          template_id?: string | null
           text_layers?: Json | null
           thumbnail_url?: string | null
           title: string
@@ -85,14 +91,59 @@ export type Database = {
           ai_copy?: Json | null
           background_image_url?: string | null
           created_at?: string
+          elements?: Json | null
           format?: string
+          global_style?: Json | null
           id?: string
           input_data?: Json
           media_type?: string
           status?: string
+          template_id?: string | null
           text_layers?: Json | null
           thumbnail_url?: string | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      templates: {
+        Row: {
+          analysis: Json | null
+          created_at: string
+          file_type: string
+          file_url: string
+          id: string
+          name: string
+          original_format: string | null
+          preview_url: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis?: Json | null
+          created_at?: string
+          file_type: string
+          file_url: string
+          id?: string
+          name: string
+          original_format?: string | null
+          preview_url?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis?: Json | null
+          created_at?: string
+          file_type?: string
+          file_url?: string
+          id?: string
+          name?: string
+          original_format?: string | null
+          preview_url?: string | null
+          status?: string
           updated_at?: string
           user_id?: string
         }
