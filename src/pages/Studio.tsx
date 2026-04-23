@@ -135,9 +135,67 @@ const Studio = () => {
     } else if (data.background_image_url) {
       setStep("editor");
     }
+    // Load rich layers (template mode)
+    const dataAny = data as unknown as { elements?: Layer[]; global_style?: GlobalStyle; template_id?: string };
+    if (dataAny.elements && Array.isArray(dataAny.elements) && dataAny.elements.length > 0) {
+      setRichLayers(dataAny.elements);
+      setStudioMode("template");
+      setStep("editor");
+    }
+    if (dataAny.global_style) setGlobalStyle({ ...DEFAULT_GLOBAL_STYLE, ...dataAny.global_style });
   };
 
-  const buildDefaultLayers = (copy: AICopy, fmt: string): TextLayer[] => {
+  const handleGenerateFromTemplate = async () => {
+    if (!user) return;
+    if (!selectedTemplate) { toast.error("Pilih template dulu"); return; }
+    if (selectedTemplate.status !== "ready") { toast.error("Template belum dianalisis AI"); return; }
+    if (!title.trim()) { toast.error("Isi judul dulu"); return; }
+    setTemplateGenerating(true);
+    try {
+      const inputData = { title, headline: title, subheadline: packageName, body: departureDate, cta };
+      let id = creationId;
+      if (!id) {
+        const { data, error } = await supabase.from("creations").insert({
+          user_id: user.id, title, format, media_type: mediaType,
+          input_data: inputData, status: "generating", template_id: selectedTemplate.id,
+        }).select().single();
+        if (error || !data) throw error || new Error("Insert failed");
+        id = data.id;
+        setCreationId(id);
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-from-template`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ creationId: id, templateId: selectedTemplate.id, format, mode: templateMode, inputData }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        if (res.status === 402) toast.error("Kredit AI habis.");
+        else if (res.status === 429) toast.error("Rate limit, coba lagi.");
+        else toast.error(result.error || "Generate gagal");
+        return;
+      }
+      setBgUrl(result.background_image_url);
+      setRichLayers(result.elements || []);
+      toast.success("Template di-generate!");
+      setStep("editor");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error");
+    } finally {
+      setTemplateGenerating(false);
+    }
+  };
+
+  const handleSaveRichLayers = async () => {
+    if (!creationId) return;
+    await supabase.from("creations").update({
+      elements: richLayers as unknown as never,
+      global_style: globalStyle as unknown as never,
+      status: "ready",
+    }).eq("id", creationId);
+    toast.success("Tersimpan!");
+  };
     const isStory = fmt === "instagram_story";
     const isLandscape = fmt === "banner_landscape";
     const baseSize = isLandscape ? 72 : isStory ? 96 : 80;
