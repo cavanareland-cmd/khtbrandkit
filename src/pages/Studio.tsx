@@ -8,9 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Sparkles, Loader2, Download, RefreshCcw, ArrowLeft, Copy, ImageIcon, Wand2, LogOut, Image, Hash, FileText } from "lucide-react";
+import { Sparkles, Loader2, Download, RefreshCcw, ArrowLeft, Copy, ImageIcon, Wand2, LogOut, Image, Hash, FileText, LayoutTemplate } from "lucide-react";
 import logo from "@/assets/karin-logo.png";
 import CanvasEditor, { type TextLayer, FORMAT_DIMENSIONS } from "@/components/studio/CanvasEditor";
+import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE } from "@/components/studio/LayeredCanvasEditor";
+import TemplatePicker from "@/components/studio/TemplatePicker";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -78,6 +80,14 @@ const Studio = () => {
   const [regenerating, setRegenerating] = useState(false);
   const [customImagePrompt, setCustomImagePrompt] = useState("");
 
+  // Template mode state
+  const [studioMode, setStudioMode] = useState<"brief" | "template">("brief");
+  const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; analysis: Record<string, unknown> | null; status: string } | null>(null);
+  const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
+  const [templateGenerating, setTemplateGenerating] = useState(false);
+  const [richLayers, setRichLayers] = useState<Layer[]>([]);
+  const [globalStyle, setGlobalStyle] = useState<GlobalStyle>(DEFAULT_GLOBAL_STYLE);
+
   useEffect(() => {
     document.title = "Studio · Brand Kit · KHT";
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -125,6 +135,66 @@ const Studio = () => {
     } else if (data.background_image_url) {
       setStep("editor");
     }
+    // Load rich layers (template mode)
+    const dataAny = data as unknown as { elements?: Layer[]; global_style?: GlobalStyle; template_id?: string };
+    if (dataAny.elements && Array.isArray(dataAny.elements) && dataAny.elements.length > 0) {
+      setRichLayers(dataAny.elements);
+      setStudioMode("template");
+      setStep("editor");
+    }
+    if (dataAny.global_style) setGlobalStyle({ ...DEFAULT_GLOBAL_STYLE, ...dataAny.global_style });
+  };
+
+  const handleGenerateFromTemplate = async () => {
+    if (!user) return;
+    if (!selectedTemplate) { toast.error("Pilih template dulu"); return; }
+    if (selectedTemplate.status !== "ready") { toast.error("Template belum dianalisis AI"); return; }
+    if (!title.trim()) { toast.error("Isi judul dulu"); return; }
+    setTemplateGenerating(true);
+    try {
+      const inputData = { title, headline: title, subheadline: packageName, body: departureDate, cta };
+      let id = creationId;
+      if (!id) {
+        const { data, error } = await supabase.from("creations").insert({
+          user_id: user.id, title, format, media_type: mediaType,
+          input_data: inputData, status: "generating", template_id: selectedTemplate.id,
+        }).select().single();
+        if (error || !data) throw error || new Error("Insert failed");
+        id = data.id;
+        setCreationId(id);
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-from-template`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ creationId: id, templateId: selectedTemplate.id, format, mode: templateMode, inputData }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        if (res.status === 402) toast.error("Kredit AI habis.");
+        else if (res.status === 429) toast.error("Rate limit, coba lagi.");
+        else toast.error(result.error || "Generate gagal");
+        return;
+      }
+      setBgUrl(result.background_image_url);
+      setRichLayers(result.elements || []);
+      toast.success("Template di-generate!");
+      setStep("editor");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error");
+    } finally {
+      setTemplateGenerating(false);
+    }
+  };
+
+  const handleSaveRichLayers = async () => {
+    if (!creationId) return;
+    await supabase.from("creations").update({
+      elements: richLayers as unknown as never,
+      global_style: globalStyle as unknown as never,
+      status: "ready",
+    }).eq("id", creationId);
+    toast.success("Tersimpan!");
   };
 
   const buildDefaultLayers = (copy: AICopy, fmt: string): TextLayer[] => {
@@ -418,6 +488,22 @@ const Studio = () => {
       </header>
 
       <main className="container py-8">
+        {/* Mode Toggle */}
+        <div className="flex items-center gap-2 mb-4">
+          <button
+            onClick={() => setStudioMode("brief")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "brief" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
+          >
+            <Sparkles className="h-3 w-3" /> AI Brief
+          </button>
+          <button
+            onClick={() => setStudioMode("template")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "template" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
+          >
+            <LayoutTemplate className="h-3 w-3" /> Dari Template
+          </button>
+        </div>
+
         {/* Step Tabs */}
         <div className="flex items-center gap-2 mb-6">
           <button
@@ -425,12 +511,12 @@ const Studio = () => {
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth ${step === "form" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
           >
             <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">1</span>
-            Brief
+            {studioMode === "template" ? "Pilih Template" : "Brief"}
           </button>
           <span className="h-px w-8 bg-border" />
           <button
-            onClick={() => aiCopy && setStep("editor")}
-            disabled={!aiCopy}
+            onClick={() => (aiCopy || richLayers.length > 0) && setStep("editor")}
+            disabled={!aiCopy && richLayers.length === 0}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth disabled:opacity-40 disabled:cursor-not-allowed ${step === "editor" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
           >
             <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">2</span>
@@ -438,7 +524,79 @@ const Studio = () => {
           </button>
         </div>
 
-        {step === "form" && (
+        {step === "form" && studioMode === "template" && (
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+              <div>
+                <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-2">Mode Template</p>
+                <h2 className="font-display text-3xl font-bold text-secondary">Upload referensi & biarkan AI yang remix</h2>
+                <p className="text-muted-foreground text-sm mt-2">Upload PNG/JPG/PDF. AI akan analisis layout, warna, dan komposisi untuk dipakai sebagai inspirasi atau di-extract jadi layer yang bisa diedit.</p>
+              </div>
+              <TemplatePicker selectedId={selectedTemplate?.id ?? null} onSelect={(t) => setSelectedTemplate(t as never)} />
+              <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Judul / Headline *</Label>
+                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Promo Umrah Ramadhan 2026" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Format Output</Label>
+                    <Select value={format} onValueChange={setFormat}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {FORMATS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Sub-headline / Paket</Label>
+                    <Input value={packageName} onChange={(e) => setPackageName(e.target.value)} placeholder="Umrah Plus Turki 12 Hari" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Detail (tanggal/harga)</Label>
+                    <Input value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} placeholder="15 Maret 2026 · Mulai 32jt" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>CTA</Label>
+                    <Input value={cta} onChange={(e) => setCta(e.target.value)} maxLength={50} />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Mode AI</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button onClick={() => setTemplateMode("inspiration")}
+                        className={`p-3 rounded-lg border text-left text-xs ${templateMode === "inspiration" ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <div className="font-semibold mb-1">✨ Inspirasi</div>
+                        <div className="text-muted-foreground">Generate background BARU bergaya template + brand KHT</div>
+                      </button>
+                      <button onClick={() => setTemplateMode("extract")}
+                        className={`p-3 rounded-lg border text-left text-xs ${templateMode === "extract" ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <div className="font-semibold mb-1">🧩 Extract & Edit</div>
+                        <div className="text-muted-foreground">Pakai template asli + auto-deteksi layer untuk diedit</div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <Button onClick={handleGenerateFromTemplate} disabled={templateGenerating || !selectedTemplate || !title.trim()}
+                  className="w-full h-12 bg-gradient-primary text-primary-foreground" size="lg">
+                  {templateGenerating ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" />Generating...</> : <><Sparkles className="mr-2 h-5 w-5" />Generate dari Template</>}
+                </Button>
+              </div>
+            </div>
+            <aside>
+              <div className="bg-gradient-hero rounded-2xl p-6 text-primary-foreground sticky top-24">
+                <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent mb-3">Cara Kerja</p>
+                <h3 className="font-display text-xl font-bold mb-4">3 Langkah</h3>
+                <ol className="space-y-3 text-sm text-primary-foreground/85 list-decimal list-inside">
+                  <li>Upload referensi visual (PNG/JPG/PDF)</li>
+                  <li>AI analisis layout, warna, mood</li>
+                  <li>Generate hasil sesuai brand KHT — edit per-layer di editor</li>
+                </ol>
+              </div>
+            </aside>
+          </div>
+        )}
+
+        {step === "form" && studioMode === "brief" && (
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form */}
             <div className="lg:col-span-2 space-y-6">
@@ -563,7 +721,32 @@ const Studio = () => {
           </div>
         )}
 
-        {step === "editor" && aiCopy && (
+        {step === "editor" && studioMode === "template" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-1">Layered Editor</p>
+                <h2 className="font-display text-3xl font-bold text-secondary">{title || "Template Edit"}</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep("form")} size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Brief</Button>
+                <Button variant="outline" onClick={handleSaveRichLayers} size="sm">Simpan</Button>
+              </div>
+            </div>
+            <LayeredCanvasEditor
+              format={format}
+              backgroundUrl={bgUrl || undefined}
+              layers={richLayers}
+              onChange={setRichLayers}
+              logoUrl={logo}
+              globalStyle={globalStyle}
+              onGlobalStyleChange={setGlobalStyle}
+              onResizeFormat={setFormat}
+            />
+          </div>
+        )}
+
+        {step === "editor" && studioMode === "brief" && aiCopy && (
           <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
