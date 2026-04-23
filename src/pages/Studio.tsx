@@ -721,7 +721,32 @@ const Studio = () => {
           </div>
         )}
 
-        {step === "editor" && aiCopy && (
+        {step === "editor" && studioMode === "template" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-1">Layered Editor</p>
+                <h2 className="font-display text-3xl font-bold text-secondary">{title || "Template Edit"}</h2>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep("form")} size="sm"><ArrowLeft className="h-4 w-4 mr-1" /> Brief</Button>
+                <Button variant="outline" onClick={handleSaveRichLayers} size="sm">Simpan</Button>
+              </div>
+            </div>
+            <LayeredCanvasEditor
+              format={format}
+              backgroundUrl={bgUrl || undefined}
+              layers={richLayers}
+              onChange={setRichLayers}
+              logoUrl={logo}
+              globalStyle={globalStyle}
+              onGlobalStyleChange={setGlobalStyle}
+              onResizeFormat={setFormat}
+            />
+          </div>
+        )}
+
+        {step === "editor" && studioMode === "brief" && aiCopy && (
           <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
