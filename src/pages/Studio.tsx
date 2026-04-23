@@ -524,7 +524,79 @@ const Studio = () => {
           </button>
         </div>
 
-        {step === "form" && (
+        {step === "form" && studioMode === "template" && (
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+              <div>
+                <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-2">Mode Template</p>
+                <h2 className="font-display text-3xl font-bold text-secondary">Upload referensi & biarkan AI yang remix</h2>
+                <p className="text-muted-foreground text-sm mt-2">Upload PNG/JPG/PDF. AI akan analisis layout, warna, dan komposisi untuk dipakai sebagai inspirasi atau di-extract jadi layer yang bisa diedit.</p>
+              </div>
+              <TemplatePicker selectedId={selectedTemplate?.id ?? null} onSelect={(t) => setSelectedTemplate(t as never)} />
+              <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Judul / Headline *</Label>
+                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Promo Umrah Ramadhan 2026" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Format Output</Label>
+                    <Select value={format} onValueChange={setFormat}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {FORMATS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Sub-headline / Paket</Label>
+                    <Input value={packageName} onChange={(e) => setPackageName(e.target.value)} placeholder="Umrah Plus Turki 12 Hari" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Detail (tanggal/harga)</Label>
+                    <Input value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} placeholder="15 Maret 2026 · Mulai 32jt" maxLength={100} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>CTA</Label>
+                    <Input value={cta} onChange={(e) => setCta(e.target.value)} maxLength={50} />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Mode AI</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button onClick={() => setTemplateMode("inspiration")}
+                        className={`p-3 rounded-lg border text-left text-xs ${templateMode === "inspiration" ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <div className="font-semibold mb-1">✨ Inspirasi</div>
+                        <div className="text-muted-foreground">Generate background BARU bergaya template + brand KHT</div>
+                      </button>
+                      <button onClick={() => setTemplateMode("extract")}
+                        className={`p-3 rounded-lg border text-left text-xs ${templateMode === "extract" ? "border-primary bg-primary/5" : "border-border"}`}>
+                        <div className="font-semibold mb-1">🧩 Extract & Edit</div>
+                        <div className="text-muted-foreground">Pakai template asli + auto-deteksi layer untuk diedit</div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <Button onClick={handleGenerateFromTemplate} disabled={templateGenerating || !selectedTemplate || !title.trim()}
+                  className="w-full h-12 bg-gradient-primary text-primary-foreground" size="lg">
+                  {templateGenerating ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" />Generating...</> : <><Sparkles className="mr-2 h-5 w-5" />Generate dari Template</>}
+                </Button>
+              </div>
+            </div>
+            <aside>
+              <div className="bg-gradient-hero rounded-2xl p-6 text-primary-foreground sticky top-24">
+                <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent mb-3">Cara Kerja</p>
+                <h3 className="font-display text-xl font-bold mb-4">3 Langkah</h3>
+                <ol className="space-y-3 text-sm text-primary-foreground/85 list-decimal list-inside">
+                  <li>Upload referensi visual (PNG/JPG/PDF)</li>
+                  <li>AI analisis layout, warna, mood</li>
+                  <li>Generate hasil sesuai brand KHT — edit per-layer di editor</li>
+                </ol>
+              </div>
+            </aside>
+          </div>
+        )}
+
+        {step === "form" && studioMode === "brief" && (
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form */}
             <div className="lg:col-span-2 space-y-6">
