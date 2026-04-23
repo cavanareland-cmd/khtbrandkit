@@ -32,8 +32,10 @@ export function useBrandKit(section: string) {
 
   useEffect(() => {
     refresh();
-    const channel = supabase
-      .channel(`brand_kit_${section}`)
+    const channel = supabase.channel(
+      `brand_kit_${section}_${Math.random().toString(36).slice(2)}`,
+    );
+    channel
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "brand_kit", filter: `section=eq.${section}` },
