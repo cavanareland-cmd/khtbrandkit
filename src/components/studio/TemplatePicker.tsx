@@ -175,7 +175,7 @@ export default function TemplatePicker({ selectedId, onSelect }: Props) {
       </div>
 
       <p className="text-xs text-muted-foreground bg-muted/50 p-2 rounded flex items-start gap-2">
-        <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5 text-amber-600" />
+        <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5 text-accent-foreground" />
         Support: PNG, JPG, WEBP, PDF. Untuk PSD/AI, export dulu ke PNG/PDF dari Photoshop/Illustrator.
       </p>
 
@@ -252,7 +252,7 @@ async function rasterizePdfFirstPage(file: File, userId: string): Promise<string
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d")!;
-    await page.render({ canvasContext: ctx, viewport, canvas }).promise;
+    await page.render({ canvasContext: ctx, viewport } as Parameters<typeof page.render>[0]).promise;
 
     const blob: Blob | null = await new Promise(res => canvas.toBlob(b => res(b), "image/jpeg", 0.85));
     if (!blob) return null;
