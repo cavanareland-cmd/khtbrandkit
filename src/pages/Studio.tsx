@@ -196,6 +196,8 @@ const Studio = () => {
     }).eq("id", creationId);
     toast.success("Tersimpan!");
   };
+
+  const buildDefaultLayers = (copy: AICopy, fmt: string): TextLayer[] => {
     const isStory = fmt === "instagram_story";
     const isLandscape = fmt === "banner_landscape";
     const baseSize = isLandscape ? 72 : isStory ? 96 : 80;
