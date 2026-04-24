@@ -107,6 +107,57 @@ export type Database = {
         }
         Relationships: []
       }
+      media_library: {
+        Row: {
+          created_at: string
+          description: string | null
+          extracted_meta: Json | null
+          extracted_text: string | null
+          file_type: string
+          file_url: string
+          id: string
+          name: string
+          original_format: string | null
+          preview_url: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          extracted_meta?: Json | null
+          extracted_text?: string | null
+          file_type: string
+          file_url: string
+          id?: string
+          name: string
+          original_format?: string | null
+          preview_url?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          extracted_meta?: Json | null
+          extracted_text?: string | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          name?: string
+          original_format?: string | null
+          preview_url?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       templates: {
         Row: {
           analysis: Json | null
