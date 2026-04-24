@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import * as Icons from "lucide-react";
 import { toast } from "sonner";
+import AIRewriteDialog from "./AIRewriteDialog";
 
 export type LayerKind = "text" | "image" | "shape" | "icon" | "logo";
 
