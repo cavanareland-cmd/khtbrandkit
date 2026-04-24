@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
           {
             role: "user",
             content: [
-              { type: "text", text: "Analisis template desain berikut. Identifikasi layout, palet warna, tipografi, mood, dan posisi area teks/icon/logo." },
+              { type: "text", text: "Analisis template desain berikut. Identifikasi layout, palet warna, tipografi, mood, posisi area, dan LAKUKAN OCR untuk membaca SEMUA teks pada setiap region. Field 'detected_text' wajib diisi dengan teks aktual yang terlihat (verbatim)." },
               { type: "image_url", image_url: { url: previewUrl } },
             ],
           },
@@ -113,8 +113,9 @@ Deno.serve(async (req) => {
                       width: { type: "number" },
                       height: { type: "number" },
                       description: { type: "string" },
+                      detected_text: { type: "string", description: "Teks AKTUAL yang terbaca pada area ini (OCR verbatim). Kosongkan jika non-text." },
                     },
-                    required: ["type", "x", "y", "width", "height", "description"],
+                    required: ["type", "x", "y", "width", "height", "description", "detected_text"],
                     additionalProperties: false,
                   },
                 },
