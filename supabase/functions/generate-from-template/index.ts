@@ -164,10 +164,15 @@ Deno.serve(async (req) => {
           opacity: 1,
         };
         if (["headline", "subheadline", "body", "cta"].includes(r.type)) {
+          // Prefer detected OCR text, then user override, then description
+          const detected = (r.detected_text || "").trim();
+          const fallback = textMap[r.type] || r.description || "";
+          const finalText = detected || fallback;
           return {
             ...base,
             kind: "text",
-            text: textMap[r.type] || r.description,
+            text: finalText,
+            originalDetectedText: detected || undefined,
             fontFamily: r.type === "headline" || r.type === "subheadline" ? "display" : "body",
             fontSize: r.type === "headline" ? 8 : r.type === "subheadline" ? 5 : r.type === "cta" ? 4 : 3,
             color: r.type === "cta" ? "#FBF8F3" : "#101F4C",
