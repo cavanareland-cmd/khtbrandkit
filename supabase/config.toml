@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.generate-from-template]
 verify_jwt = false
+
+[functions.extract-media]
+verify_jwt = false
+
+[functions.rewrite-text-layer]
+verify_jwt = false

@@ -13,6 +13,7 @@ import logo from "@/assets/karin-logo.png";
 import CanvasEditor, { type TextLayer, FORMAT_DIMENSIONS } from "@/components/studio/CanvasEditor";
 import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE } from "@/components/studio/LayeredCanvasEditor";
 import TemplatePicker from "@/components/studio/TemplatePicker";
+import MediaLibrary from "@/components/studio/MediaLibrary";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -582,15 +583,19 @@ const Studio = () => {
                 </Button>
               </div>
             </div>
-            <aside>
-              <div className="bg-gradient-hero rounded-2xl p-6 text-primary-foreground sticky top-24">
+            <aside className="space-y-4">
+              <div className="bg-gradient-hero rounded-2xl p-6 text-primary-foreground">
                 <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent mb-3">Cara Kerja</p>
                 <h3 className="font-display text-xl font-bold mb-4">3 Langkah</h3>
                 <ol className="space-y-3 text-sm text-primary-foreground/85 list-decimal list-inside">
                   <li>Upload referensi visual (PNG/JPG/PDF)</li>
-                  <li>AI analisis layout, warna, mood</li>
-                  <li>Generate hasil sesuai brand KHT — edit per-layer di editor</li>
+                  <li>AI analisis layout, warna, mood, & teks (OCR)</li>
+                  <li>Edit per-layer + AI Rewrite teks pakai bahan dari Pustaka Media</li>
                 </ol>
+              </div>
+              <div className="bg-card border border-border rounded-2xl p-4">
+                <MediaLibrary selectedIds={[]} onSelectionChange={() => {}} selectable={false} />
+                <p className="text-[10px] text-muted-foreground mt-2 italic">Bahan ini bisa dipilih saat AI Rewrite text di editor.</p>
               </div>
             </aside>
           </div>
