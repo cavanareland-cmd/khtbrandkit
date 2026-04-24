@@ -518,12 +518,26 @@ function CommonProps({ layer, update }: { layer: Layer; update: (p: Partial<Laye
 }
 
 function TextProps({ layer, update }: { layer: TextLayerEl; update: (p: Partial<TextLayerEl>) => void }) {
+  const [aiOpen, setAiOpen] = useState(false);
+  const kind = layer.fontSize >= 7 ? "headline" : layer.fontSize >= 4.5 ? "subheadline" : layer.bgOpacity ? "cta" : "body";
   return (
     <>
       <div>
-        <Label className="text-xs">Teks</Label>
+        <div className="flex items-center justify-between mb-1">
+          <Label className="text-xs">Teks</Label>
+          <Button size="sm" variant="outline" className="h-6 text-xs px-2" onClick={() => setAiOpen(true)}>
+            <Sparkles className="w-3 h-3 mr-1 text-primary" /> AI Rewrite
+          </Button>
+        </div>
         <Textarea value={layer.text} onChange={(e) => update({ text: e.target.value })} rows={3} className="text-xs" />
       </div>
+      <AIRewriteDialog
+        open={aiOpen}
+        onOpenChange={setAiOpen}
+        currentText={layer.text}
+        layerKind={kind}
+        onApply={(newText) => update({ text: newText })}
+      />
       <div className="grid grid-cols-3 gap-1">
         <Button size="sm" variant={layer.fontFamily === "display" ? "default" : "outline"} onClick={() => update({ fontFamily: "display" })} className="text-xs">Display</Button>
         <Button size="sm" variant={layer.fontFamily === "body" ? "default" : "outline"} onClick={() => update({ fontFamily: "body" })} className="text-xs">Body</Button>
