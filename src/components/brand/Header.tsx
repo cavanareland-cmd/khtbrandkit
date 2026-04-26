@@ -9,6 +9,7 @@ const Header = () => {
     { label: "Tipografi", href: "#typography" },
     { label: "Aset", href: "#assets" },
     { label: "Brand Voice", href: "#voice" },
+    { label: "Company Profile", href: "/company-profile" },
   ];
 
   return (
