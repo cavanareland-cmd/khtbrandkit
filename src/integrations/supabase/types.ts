@@ -47,6 +47,75 @@ export type Database = {
         }
         Relationships: []
       }
+      cms_pages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cms_sections: {
+        Row: {
+          block_key: string | null
+          content: Json
+          created_at: string
+          id: string
+          is_visible: boolean
+          label: string | null
+          page_slug: string
+          section_key: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          block_key?: string | null
+          content?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          label?: string | null
+          page_slug: string
+          section_key: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          block_key?: string | null
+          content?: Json
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          label?: string | null
+          page_slug?: string
+          section_key?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       creations: {
         Row: {
           ai_brief: Json | null
