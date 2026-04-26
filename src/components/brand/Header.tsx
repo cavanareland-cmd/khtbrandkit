@@ -4,6 +4,7 @@ import { Sparkles, LayoutDashboard } from "lucide-react";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
 const Header = () => {
+  const { isAuthed } = useAuthSession();
   const links = [
     { label: "Identitas", href: "#hero" },
     { label: "Warna", href: "#colors" },
@@ -36,13 +37,24 @@ const Header = () => {
             </a>
           ))}
         </nav>
-        <Link
-          to="/studio"
-          className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full bg-gradient-primary px-5 text-sm font-medium text-primary-foreground shadow-elegant hover:shadow-glow transition-smooth"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          AI Studio
-        </Link>
+        <div className="flex items-center gap-2">
+          {isAuthed && (
+            <Link
+              to="/admin"
+              className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:border-primary/40 transition-smooth"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              Admin
+            </Link>
+          )}
+          <Link
+            to="/studio"
+            className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full bg-gradient-primary px-5 text-sm font-medium text-primary-foreground shadow-elegant hover:shadow-glow transition-smooth"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            AI Studio
+          </Link>
+        </div>
       </div>
     </header>
   );
