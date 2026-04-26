@@ -1,6 +1,7 @@
 import logo from "@/assets/karin-logo.png";
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import { Sparkles, LayoutDashboard } from "lucide-react";
+import { useAuthSession } from "@/hooks/useAuthSession";
 
 const Header = () => {
   const links = [
