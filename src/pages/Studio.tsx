@@ -491,7 +491,13 @@ const Studio = () => {
 
       <main className="container py-8">
         {/* Mode Toggle */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          <button
+            onClick={() => setStudioMode("pro")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "pro" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
+          >
+            <Wand2 className="h-3 w-3" /> Pro Ad Creator
+          </button>
           <button
             onClick={() => setStudioMode("brief")}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "brief" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
@@ -505,6 +511,18 @@ const Studio = () => {
             <LayoutTemplate className="h-3 w-3" /> Dari Template
           </button>
         </div>
+
+        {studioMode === "pro" && (
+          <div className="space-y-3">
+            <div>
+              <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-1">Pro Ad Creator</p>
+              <h2 className="font-display text-3xl font-bold text-secondary">Editor Poster Profesional · 1080×1350</h2>
+              <p className="text-muted-foreground text-sm mt-1">Drag &amp; drop layer, badge, inclusion box, footer brand. Ekspor ke PNG resolusi penuh.</p>
+            </div>
+            <ProAdCreator />
+          </div>
+        )}
+
 
         {/* Step Tabs */}
         <div className="flex items-center gap-2 mb-6">
