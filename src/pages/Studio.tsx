@@ -14,6 +14,7 @@ import CanvasEditor, { type TextLayer, FORMAT_DIMENSIONS } from "@/components/st
 import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE } from "@/components/studio/LayeredCanvasEditor";
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import MediaLibrary from "@/components/studio/MediaLibrary";
+import ProAdCreator from "@/components/studio/ProAdCreator";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -82,7 +83,7 @@ const Studio = () => {
   const [customImagePrompt, setCustomImagePrompt] = useState("");
 
   // Template mode state
-  const [studioMode, setStudioMode] = useState<"brief" | "template">("brief");
+  const [studioMode, setStudioMode] = useState<"brief" | "template" | "pro">("pro");
   const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; analysis: Record<string, unknown> | null; status: string } | null>(null);
   const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
   const [templateGenerating, setTemplateGenerating] = useState(false);
