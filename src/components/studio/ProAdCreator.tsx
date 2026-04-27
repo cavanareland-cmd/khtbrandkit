@@ -216,6 +216,14 @@ export default function ProAdCreator({ initialLayers, initialBg }: Props) {
   const [showSafe, setShowSafe] = useState(true);
   const [exporting, setExporting] = useState(false);
 
+  // ---- AI Assistant state ----
+  const [leftTab, setLeftTab] = useState<"editor" | "ai">("editor");
+  const [aiPrompt, setAiPrompt] = useState(
+    "Buat Paket Umroh Silver untuk November, harga 34,9 juta, durasi 13 hari, termasuk Free City Tour & 3x Umroh.",
+  );
+  const [aiCaption, setAiCaption] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
   const canvasRef = useRef<HTMLDivElement>(null);
   const exportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ id: string; mode: "move" | "resize"; sx: number; sy: number; ox: number; oy: number; ow: number; oh: number; rect: DOMRect } | null>(null);
