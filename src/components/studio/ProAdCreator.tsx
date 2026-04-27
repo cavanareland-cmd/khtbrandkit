@@ -370,6 +370,92 @@ export default function ProAdCreator({ initialLayers, initialBg }: Props) {
     }
   }, []);
 
+  // ---- AI: Text-to-Canvas (mock parser) ----
+  const aiGenerateLayout = useCallback(() => {
+    const text = aiPrompt.toLowerCase();
+    const tier = /platinum/.test(text) ? "PLATINUM" : /gold/.test(text) ? "GOLD" : "SILVER";
+    let price = "Rp 34,9 Juta";
+    const mJuta = aiPrompt.match(/(\d+[.,]?\d*)\s*(juta|jt)/i);
+    const mRp = aiPrompt.match(/rp\s*([\d.,]+)/i);
+    if (mJuta) price = `Rp ${mJuta[1].replace(".", ",")} Juta`;
+    else if (mRp) price = `Rp ${mRp[1]}`;
+    const months = ["januari","februari","maret","april","mei","juni","juli","agustus","september","oktober","november","desember"];
+    const monthHit = months.find((m) => text.includes(m));
+    const dateLabel = monthHit ? `${monthHit.toUpperCase()} 2026` : "19 NOVEMBER 2026";
+    const mDur = aiPrompt.match(/(\d{1,2})\s*hari|(\d{1,2})\s*-?\s*h\b/i);
+    const dur = mDur ? `${mDur[1] ?? mDur[2]}-H · QUAD` : "13-H · QUAD";
+    const defaultInc = ["Free City Tour", "3x Umroh", "Visa & Asuransi", "Hotel Bintang 5", "Nasi Mandhi", "Manasik 2x"];
+    const inc: string[] = [];
+    if (/city tour/.test(text)) inc.push("Free City Tour Makkah - Madinah");
+    if (/3x umroh|umroh 3x/.test(text)) inc.push("3x Umroh");
+    if (/mandhi/.test(text)) inc.push("Nasi Mandhi");
+    if (/visa/.test(text)) inc.push("Visa Umroh");
+    if (/hotel/.test(text)) inc.push("Hotel Bintang 5");
+    if (/manasik/.test(text)) inc.push("Manasik 2x");
+    const items = inc.length ? inc : defaultInc;
+
+    setLayers((arr) => arr.map((l) => {
+      if (l.id === "headline" && l.kind === "text") return { ...l, text: `PAKET UMROH ${tier}` } as Layer;
+      if (l.id === "date-badge" && l.kind === "badge") return { ...l, text: dateLabel } as Layer;
+      if (l.id === "duration" && l.kind === "text") return { ...l, text: dur } as Layer;
+      if (l.id === "new-price" && l.kind === "text") return { ...l, text: price } as Layer;
+      if (l.id === "inclusion" && l.kind === "inclusion") return { ...l, items } as Layer;
+      if (l.id === "footer" && l.kind === "footer")
+        return { ...l, whatsapp: "+628132543072", address: "Karin Hidayah Tour · Surabaya" } as Layer;
+      return l;
+    }));
+    toast.success("✨ Layout berhasil di-generate AI");
+  }, [aiPrompt]);
+
+  // ---- AI: Meta Ads caption (reads canvas state) ----
+  const aiGenerateCaption = useCallback(() => {
+    const getText = (id: string) => {
+      const l = layers.find((x) => x.id === id);
+      if (!l) return "";
+      if (l.kind === "text") return l.text;
+      if (l.kind === "badge") return l.text;
+      return "";
+    };
+    const title = getText("headline") || "Paket Umroh Spesial";
+    const date = getText("date-badge") || "Segera";
+    const price = getText("new-price") || "Harga spesial";
+    const dur = getText("duration") || "";
+    const inc = layers.find((l) => l.id === "inclusion");
+    const incList = inc && inc.kind === "inclusion" ? inc.items.slice(0, 4).join(", ") : "";
+    const footer = layers.find((l) => l.kind === "footer");
+    const wa = footer && footer.kind === "footer" ? footer.whatsapp : "+628132543072";
+
+    const caption = `🕋 ${title} — Wujudkan Impian Beribadah ke Tanah Suci! ✨
+
+📅 Keberangkatan: ${date}
+🕌 Durasi: ${dur}
+💰 Harga Spesial: ${price}
+
+✅ Sudah Termasuk:
+${incList ? "• " + incList.split(", ").join("\n• ") : "• Tiket PP\n• Hotel Bintang 5\n• Visa & Asuransi"}
+
+Jangan tunda lagi panggilan-Nya. Kuota terbatas, daftar sekarang!
+
+📲 WhatsApp: ${wa}
+🌙 Karin Hidayah Tour & Travel
+
+#PaketUmroh #UmrohMurah #UmrohSurabaya #KarinHidayahTour`;
+    setAiCaption(caption);
+    toast.success("📝 Caption Meta Ads siap!");
+  }, [layers]);
+
+  const copyCaption = async () => {
+    if (!aiCaption) return;
+    try {
+      await navigator.clipboard.writeText(aiCaption);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+      toast.success("Caption disalin!");
+    } catch {
+      toast.error("Gagal menyalin");
+    }
+  };
+
   // ---- keyboard delete ----
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
