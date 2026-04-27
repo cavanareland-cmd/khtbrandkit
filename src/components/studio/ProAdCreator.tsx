@@ -477,46 +477,163 @@ Jangan tunda lagi panggilan-Nya. Kuota terbatas, daftar sekarang!
     <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_320px] gap-4 h-[calc(100vh-180px)]">
       {/* ============== LEFT: Tools ============== */}
       <aside className="rounded-2xl bg-card border border-border p-3 overflow-y-auto">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold">Tambah Elemen</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <Button size="sm" variant="outline" onClick={addText}><Type className="w-3 h-3 mr-1" /> Teks</Button>
-          <Button size="sm" variant="outline" onClick={addImage}><ImageIcon className="w-3 h-3 mr-1" /> Gambar</Button>
-          <Button size="sm" variant="outline" onClick={addShape}><SquareIcon className="w-3 h-3 mr-1" /> Bentuk</Button>
-          <Button size="sm" variant="outline" onClick={addBadge}><Tag className="w-3 h-3 mr-1" /> Badge</Button>
-          <Button size="sm" variant="outline" onClick={addInclusion} className="col-span-2"><ListChecks className="w-3 h-3 mr-1" /> Inclusion Box</Button>
-          <Button size="sm" variant="outline" onClick={addFooter} className="col-span-2"><Phone className="w-3 h-3 mr-1" /> Footer Brand</Button>
-        </div>
-
-        <div className="border-t border-border pt-3 mb-3">
-          <Label className="text-xs">Background</Label>
-          <input
-            type="file" accept="image/*"
-            onChange={(e) => e.target.files?.[0] && handleBgUpload(e.target.files[0])}
-            className="mt-1 w-full text-xs"
-          />
-          {bg && (
-            <Button size="sm" variant="ghost" className="mt-1 w-full text-destructive" onClick={() => setBg(null)}>
-              <Trash2 className="w-3 h-3 mr-1" /> Hapus background
-            </Button>
-          )}
-        </div>
-
-        <div className="border-t border-border pt-3 space-y-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Safe Area (Meta Ads)</Label>
-            <Switch checked={showSafe} onCheckedChange={setShowSafe} />
-          </div>
-          <Button
-            size="sm" className="w-full bg-primary text-primary-foreground"
-            onClick={exportPng} disabled={exporting}
+        {/* Editor / AI Assistant tab toggle */}
+        <div className="grid grid-cols-2 gap-1 p-1 rounded-lg bg-muted mb-3">
+          <button
+            onClick={() => setLeftTab("editor")}
+            className={cn(
+              "flex items-center justify-center gap-1 text-xs font-medium py-1.5 rounded-md transition-all",
+              leftTab === "editor" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
           >
-            <Download className="w-3 h-3 mr-1" />
-            {exporting ? "Mengekspor..." : "Unduh Poster (PNG)"}
-          </Button>
+            🎨 Editor
+          </button>
+          <button
+            onClick={() => setLeftTab("ai")}
+            className={cn(
+              "flex items-center justify-center gap-1 text-xs font-medium py-1.5 rounded-md transition-all",
+              leftTab === "ai"
+                ? "bg-gradient-to-r from-primary to-primary/70 text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Sparkles className="w-3 h-3" /> AI Assistant
+          </button>
         </div>
+
+        {leftTab === "editor" && (
+          <motion.div
+            key="editor"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18 }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Plus className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold">Tambah Elemen</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              <Button size="sm" variant="outline" onClick={addText}><Type className="w-3 h-3 mr-1" /> Teks</Button>
+              <Button size="sm" variant="outline" onClick={addImage}><ImageIcon className="w-3 h-3 mr-1" /> Gambar</Button>
+              <Button size="sm" variant="outline" onClick={addShape}><SquareIcon className="w-3 h-3 mr-1" /> Bentuk</Button>
+              <Button size="sm" variant="outline" onClick={addBadge}><Tag className="w-3 h-3 mr-1" /> Badge</Button>
+              <Button size="sm" variant="outline" onClick={addInclusion} className="col-span-2"><ListChecks className="w-3 h-3 mr-1" /> Inclusion Box</Button>
+              <Button size="sm" variant="outline" onClick={addFooter} className="col-span-2"><Phone className="w-3 h-3 mr-1" /> Footer Brand</Button>
+            </div>
+
+            <div className="border-t border-border pt-3 mb-3">
+              <Label className="text-xs">Background</Label>
+              <input
+                type="file" accept="image/*"
+                onChange={(e) => e.target.files?.[0] && handleBgUpload(e.target.files[0])}
+                className="mt-1 w-full text-xs"
+              />
+              {bg && (
+                <Button size="sm" variant="ghost" className="mt-1 w-full text-destructive" onClick={() => setBg(null)}>
+                  <Trash2 className="w-3 h-3 mr-1" /> Hapus background
+                </Button>
+              )}
+            </div>
+
+            <div className="border-t border-border pt-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs">Safe Area (Meta Ads)</Label>
+                <Switch checked={showSafe} onCheckedChange={setShowSafe} />
+              </div>
+              <Button
+                size="sm" className="w-full bg-primary text-primary-foreground"
+                onClick={exportPng} disabled={exporting}
+              >
+                <Download className="w-3 h-3 mr-1" />
+                {exporting ? "Mengekspor..." : "Unduh Poster (PNG)"}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {leftTab === "ai" && (
+          <motion.div
+            key="ai"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-4"
+          >
+            {/* Header chat-style */}
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-semibold">Karin AI</div>
+                <div className="text-[10px] text-muted-foreground truncate">Asisten desain umroh</div>
+              </div>
+            </div>
+
+            {/* Feature 1: Text-to-Canvas */}
+            <div className="space-y-2">
+              <Label className="text-xs flex items-center gap-1">
+                <PenLine className="w-3 h-3" /> Describe your Umrah Package
+              </Label>
+              <Textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Make a Silver Umrah package for November, 34.9 million..."
+                className="text-xs min-h-[100px] resize-none"
+              />
+              <Button
+                size="sm"
+                onClick={aiGenerateLayout}
+                className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:opacity-90"
+              >
+                <Wand2 className="w-3 h-3 mr-1" /> ✨ Generate Layout
+              </Button>
+              <p className="text-[10px] text-muted-foreground italic">
+                AI akan auto-isi judul, harga, tanggal, inklusi & footer di canvas.
+              </p>
+            </div>
+
+            {/* Feature 2: Meta Ads Copywriter */}
+            <div className="border-t border-border pt-3 space-y-2">
+              <div className="flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-primary" />
+                <Label className="text-xs">Meta Ads Assets</Label>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={aiGenerateCaption}
+                className="w-full"
+              >
+                📝 Generate Caption & Hook
+              </Button>
+
+              {aiCaption && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="relative"
+                >
+                  <pre className="text-[10px] leading-relaxed whitespace-pre-wrap bg-muted/60 border border-border rounded-md p-2 max-h-56 overflow-y-auto font-mono">
+                    {aiCaption}
+                  </pre>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={copyCaption}
+                    className="w-full mt-2"
+                  >
+                    {copied ? (
+                      <><Check className="w-3 h-3 mr-1" /> Tersalin!</>
+                    ) : (
+                      <><Copy className="w-3 h-3 mr-1" /> Copy to Clipboard</>
+                    )}
+                  </Button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
       </aside>
 
       {/* ============== CENTER: Canvas ============== */}
