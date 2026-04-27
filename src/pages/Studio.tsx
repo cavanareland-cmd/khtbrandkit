@@ -524,25 +524,27 @@ const Studio = () => {
         )}
 
 
-        {/* Step Tabs */}
-        <div className="flex items-center gap-2 mb-6">
-          <button
-            onClick={() => setStep("form")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth ${step === "form" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
-          >
-            <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">1</span>
-            {studioMode === "template" ? "Pilih Template" : "Brief"}
-          </button>
-          <span className="h-px w-8 bg-border" />
-          <button
-            onClick={() => (aiCopy || richLayers.length > 0) && setStep("editor")}
-            disabled={!aiCopy && richLayers.length === 0}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth disabled:opacity-40 disabled:cursor-not-allowed ${step === "editor" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
-          >
-            <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">2</span>
-            Editor
-          </button>
-        </div>
+        {/* Step Tabs (hidden in Pro mode) */}
+        {studioMode !== "pro" && (
+          <div className="flex items-center gap-2 mb-6">
+            <button
+              onClick={() => setStep("form")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth ${step === "form" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+            >
+              <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">1</span>
+              {studioMode === "template" ? "Pilih Template" : "Brief"}
+            </button>
+            <span className="h-px w-8 bg-border" />
+            <button
+              onClick={() => (aiCopy || richLayers.length > 0) && setStep("editor")}
+              disabled={!aiCopy && richLayers.length === 0}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth disabled:opacity-40 disabled:cursor-not-allowed ${step === "editor" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+            >
+              <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">2</span>
+              Editor
+            </button>
+          </div>
+        )}
 
         {step === "form" && studioMode === "template" && (
           <div className="grid lg:grid-cols-3 gap-6">
