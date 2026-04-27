@@ -14,6 +14,7 @@ import CanvasEditor, { type TextLayer, FORMAT_DIMENSIONS } from "@/components/st
 import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE } from "@/components/studio/LayeredCanvasEditor";
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import MediaLibrary from "@/components/studio/MediaLibrary";
+import ProAdCreator from "@/components/studio/ProAdCreator";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -82,7 +83,7 @@ const Studio = () => {
   const [customImagePrompt, setCustomImagePrompt] = useState("");
 
   // Template mode state
-  const [studioMode, setStudioMode] = useState<"brief" | "template">("brief");
+  const [studioMode, setStudioMode] = useState<"brief" | "template" | "pro">("pro");
   const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; analysis: Record<string, unknown> | null; status: string } | null>(null);
   const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
   const [templateGenerating, setTemplateGenerating] = useState(false);
@@ -490,7 +491,13 @@ const Studio = () => {
 
       <main className="container py-8">
         {/* Mode Toggle */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          <button
+            onClick={() => setStudioMode("pro")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "pro" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
+          >
+            <Wand2 className="h-3 w-3" /> Pro Ad Creator
+          </button>
           <button
             onClick={() => setStudioMode("brief")}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-alt uppercase tracking-widest border transition-smooth ${studioMode === "brief" ? "bg-primary text-primary-foreground border-primary" : "bg-card text-muted-foreground border-border hover:bg-muted/50"}`}
@@ -505,25 +512,39 @@ const Studio = () => {
           </button>
         </div>
 
-        {/* Step Tabs */}
-        <div className="flex items-center gap-2 mb-6">
-          <button
-            onClick={() => setStep("form")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth ${step === "form" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
-          >
-            <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">1</span>
-            {studioMode === "template" ? "Pilih Template" : "Brief"}
-          </button>
-          <span className="h-px w-8 bg-border" />
-          <button
-            onClick={() => (aiCopy || richLayers.length > 0) && setStep("editor")}
-            disabled={!aiCopy && richLayers.length === 0}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth disabled:opacity-40 disabled:cursor-not-allowed ${step === "editor" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
-          >
-            <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">2</span>
-            Editor
-          </button>
-        </div>
+        {studioMode === "pro" && (
+          <div className="space-y-3">
+            <div>
+              <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-1">Pro Ad Creator</p>
+              <h2 className="font-display text-3xl font-bold text-secondary">Editor Poster Profesional · 1080×1350</h2>
+              <p className="text-muted-foreground text-sm mt-1">Drag &amp; drop layer, badge, inclusion box, footer brand. Ekspor ke PNG resolusi penuh.</p>
+            </div>
+            <ProAdCreator />
+          </div>
+        )}
+
+
+        {/* Step Tabs (hidden in Pro mode) */}
+        {studioMode !== "pro" && (
+          <div className="flex items-center gap-2 mb-6">
+            <button
+              onClick={() => setStep("form")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth ${step === "form" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+            >
+              <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">1</span>
+              {studioMode === "template" ? "Pilih Template" : "Brief"}
+            </button>
+            <span className="h-px w-8 bg-border" />
+            <button
+              onClick={() => (aiCopy || richLayers.length > 0) && setStep("editor")}
+              disabled={!aiCopy && richLayers.length === 0}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-alt uppercase tracking-widest transition-smooth disabled:opacity-40 disabled:cursor-not-allowed ${step === "editor" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+            >
+              <span className="h-5 w-5 rounded-full bg-background/20 text-[10px] flex items-center justify-center">2</span>
+              Editor
+            </button>
+          </div>
+        )}
 
         {step === "form" && studioMode === "template" && (
           <div className="grid lg:grid-cols-3 gap-6">
