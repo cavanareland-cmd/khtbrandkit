@@ -21,6 +21,7 @@ import {
   Eye, EyeOff, Lock, Unlock, ArrowUp, ArrowDown, Trash2, Download,
   Bold, Italic, AlignLeft, AlignCenter, AlignRight, Plus, Sparkles, Layers,
   Circle as CircleIcon, Square as SqOutline, MessageCircle, MapPin,
+  Bot, Wand2, Copy, Check, PenLine,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
