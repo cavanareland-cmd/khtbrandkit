@@ -122,11 +122,35 @@ const Assets = () => {
     setLoadingTpl(false);
   }, []);
 
+  // Poll while any template is being analyzed
+  useEffect(() => {
+    if (!selectedCategory) return;
+    const hasAnalyzing = templates.some(t => t.status === "analyzing");
+    if (!hasAnalyzing) return;
+    const id = setInterval(() => loadTemplates(selectedCategory.key), 4000);
+    return () => clearInterval(id);
+  }, [templates, selectedCategory, loadTemplates]);
+
   const handleSelectCategory = (cat: typeof CATEGORIES[number]) => {
     setSelectedCategory(cat);
     setStep("template");
     loadTemplates(cat.key);
   };
+
+  const runAnalyze = useCallback(async (templateId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-template", {
+        body: { templateId },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast.success("AI selesai memetakan layer template ✨");
+        if (selectedCategory) loadTemplates(selectedCategory.key);
+      }
+    } catch (e) {
+      toast.error("AI analyze gagal: " + (e instanceof Error ? e.message : "error"));
+    }
+  }, [selectedCategory, loadTemplates]);
 
   const handleUpload = async (file: File) => {
     if (!user || !selectedCategory) return;
@@ -145,7 +169,7 @@ const Assets = () => {
       const fileUrl = supabase.storage.from("templates").getPublicUrl(path).data.publicUrl;
       const previewUrl = file.type.startsWith("image/") ? fileUrl : null;
 
-      const { error: insErr } = await supabase.from("templates").insert({
+      const { data: inserted, error: insErr } = await supabase.from("templates").insert({
         user_id: user.id,
         name: file.name,
         file_url: fileUrl,
@@ -155,10 +179,16 @@ const Assets = () => {
         status: previewUrl ? "uploaded" : "needs_export",
         category: selectedCategory.key,
         format: selectedCategory.format,
-      });
+      }).select().single();
       if (insErr) throw insErr;
-      toast.success("Template diupload!");
+
+      toast.success("Template diupload! AI sedang memetakan layer…");
       loadTemplates(selectedCategory.key);
+
+      // Auto-trigger AI analysis untuk template gambar
+      if (previewUrl && inserted?.id) {
+        runAnalyze(inserted.id);
+      }
     } catch (e) {
       toast.error("Upload gagal: " + (e instanceof Error ? e.message : "error"));
     } finally {
@@ -166,10 +196,39 @@ const Assets = () => {
     }
   };
 
+  const handleReanalyze = async (e: React.MouseEvent, templateId: string) => {
+    e.stopPropagation();
+    toast.info("Memulai analisis ulang…");
+    await runAnalyze(templateId);
+  };
+
   const handleSelectTemplate = (t: TemplateRow) => {
     setSelectedTpl(t);
     setStep("form");
     if (!title) setTitle(`Promo ${selectedCategory?.title ?? ""}`);
+
+    // Auto-prefill form dari hasil AI analysis (OCR teks per region)
+    const analysis = (t.analysis ?? {}) as Record<string, unknown>;
+    const regions = Array.isArray(analysis.regions) ? (analysis.regions as Array<Record<string, unknown>>) : [];
+    if (regions.length > 0) {
+      const headlineText = regions.find(r => r.type === "headline")?.detected_text as string | undefined;
+      const subheadText = regions.find(r => r.type === "subheadline")?.detected_text as string | undefined;
+      const bodyTexts = regions.filter(r => r.type === "body").map(r => r.detected_text as string).filter(Boolean);
+      const ctaText = regions.find(r => r.type === "cta")?.detected_text as string | undefined;
+
+      if (headlineText && !packageName) setPackageName(headlineText.replace(/PAKET\s+/i, "").trim());
+      const allTxt = [headlineText, subheadText, ...bodyTexts].filter(Boolean).join(" ");
+      const priceMatch = allTxt.match(/Rp\.?\s*[\d.,]+\s*(juta|jt|m)?/i);
+      if (priceMatch && !price) setPrice(priceMatch[0]);
+      const dateMatch = allTxt.match(/\d{1,2}\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\s+\d{4}/i);
+      if (dateMatch && !departureDate) setDepartureDate(dateMatch[0]);
+      const durMatch = allTxt.match(/\d+\s*-?\s*(hari|H)\b/i);
+      if (durMatch && !duration) setDuration(durMatch[0]);
+      if (bodyTexts.length > 0 && !inclusions) setInclusions(bodyTexts.join("\n"));
+      if (ctaText && !cta.includes(ctaText)) setCta(ctaText);
+
+      toast.success("Form di-prefill dari hasil AI analysis 🎯");
+    }
   };
 
   const handleContinueToEditor = async () => {
@@ -186,22 +245,24 @@ const Assets = () => {
         inclusions: inclusions.split("\n").map(s => s.trim()).filter(Boolean),
         cta,
         category: selectedCategory.key,
+        template_analysis: selectedTpl.analysis ?? null,
+        template_preview_url: selectedTpl.preview_url,
       };
-      // Map category → studio format
       const studioFormat =
         selectedCategory.format === "1080x1920" ? "instagram_story"
         : selectedCategory.format === "1080x1080" ? "instagram_post"
         : "instagram_post";
 
-      const { data, error } = await supabase.from("creations").insert({
+      const { data, error } = await supabase.from("creations").insert([{
         user_id: user.id,
         title,
         format: studioFormat,
         media_type: selectedCategory.key,
-        input_data: inputData,
+        input_data: inputData as unknown as Record<string, never>,
         template_id: selectedTpl.id,
+        background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
         status: "draft",
-      }).select().single();
+      }]).select().single();
 
       if (error || !data) throw error || new Error("Gagal membuat draft");
       toast.success("Draft dibuat. Lanjut ke editor…");
@@ -372,14 +433,34 @@ const Assets = () => {
                       </div>
                       <div className="p-2">
                         <p className="text-xs font-medium truncate">{t.name}</p>
-                        <div className="flex items-center gap-1 mt-1">
-                          {t.status === "ready" && (
-                            <Badge variant="secondary" className="text-[9px] h-4 px-1.5 gap-0.5">
-                              <Sparkles className="w-2 h-2" /> AI Ready
-                            </Badge>
-                          )}
-                          {t.status === "uploaded" && (
-                            <Badge variant="outline" className="text-[9px] h-4 px-1.5">Belum analisis</Badge>
+                        <div className="flex items-center justify-between gap-1 mt-1">
+                          <div className="flex items-center gap-1 min-w-0">
+                            {t.status === "ready" && (
+                              <Badge variant="secondary" className="text-[9px] h-4 px-1.5 gap-0.5">
+                                <Sparkles className="w-2 h-2" /> AI Ready
+                              </Badge>
+                            )}
+                            {t.status === "analyzing" && (
+                              <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-0.5 border-primary/40 text-primary">
+                                <Loader2 className="w-2 h-2 animate-spin" /> Menganalisis
+                              </Badge>
+                            )}
+                            {t.status === "uploaded" && (
+                              <Badge variant="outline" className="text-[9px] h-4 px-1.5">Belum analisis</Badge>
+                            )}
+                            {t.status === "failed" && (
+                              <Badge variant="destructive" className="text-[9px] h-4 px-1.5">Gagal</Badge>
+                            )}
+                          </div>
+                          {(t.status === "uploaded" || t.status === "failed" || t.status === "ready") && t.preview_url && (
+                            <span
+                              role="button"
+                              onClick={(e) => handleReanalyze(e as unknown as React.MouseEvent, t.id)}
+                              className="text-[9px] text-primary hover:underline cursor-pointer shrink-0"
+                              title="Analisis ulang dengan AI"
+                            >
+                              {t.status === "ready" ? "Re-AI" : "Analisis"}
+                            </span>
                           )}
                         </div>
                       </div>
