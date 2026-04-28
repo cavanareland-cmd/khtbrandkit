@@ -105,15 +105,6 @@ const Assets = () => {
     if (!authLoading && !user) navigate("/auth");
   }, [authLoading, user, navigate]);
 
-  // Poll while any template is being analyzed
-  useEffect(() => {
-    if (!selectedCategory) return;
-    const hasAnalyzing = templates.some(t => t.status === "analyzing");
-    if (!hasAnalyzing) return;
-    const id = setInterval(() => loadTemplates(selectedCategory.key), 4000);
-    return () => clearInterval(id);
-  }, [templates, selectedCategory, loadTemplates]);
-
   const loadTemplates = useCallback(async (categoryKey: CategoryKey) => {
     setLoadingTpl(true);
     const { data, error } = await supabase
@@ -130,6 +121,15 @@ const Assets = () => {
     }
     setLoadingTpl(false);
   }, []);
+
+  // Poll while any template is being analyzed
+  useEffect(() => {
+    if (!selectedCategory) return;
+    const hasAnalyzing = templates.some(t => t.status === "analyzing");
+    if (!hasAnalyzing) return;
+    const id = setInterval(() => loadTemplates(selectedCategory.key), 4000);
+    return () => clearInterval(id);
+  }, [templates, selectedCategory, loadTemplates]);
 
   const handleSelectCategory = (cat: typeof CATEGORIES[number]) => {
     setSelectedCategory(cat);
