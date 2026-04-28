@@ -1,6 +1,6 @@
 import logo from "@/assets/karin-logo.png";
 import { Link } from "react-router-dom";
-import { Sparkles, LayoutDashboard } from "lucide-react";
+import { Sparkles, LayoutDashboard, FileImage } from "lucide-react";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
 const Header = () => {
@@ -39,13 +39,22 @@ const Header = () => {
         </nav>
         <div className="flex items-center gap-2">
           {isAuthed && (
-            <Link
-              to="/admin"
-              className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:border-primary/40 transition-smooth"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5" />
-              Admin
-            </Link>
+            <>
+              <Link
+                to="/assets"
+                className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:border-primary/40 transition-smooth"
+              >
+                <FileImage className="h-3.5 w-3.5" />
+                Buat Aset
+              </Link>
+              <Link
+                to="/admin"
+                className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-medium text-foreground/80 hover:text-primary hover:border-primary/40 transition-smooth"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                Admin
+              </Link>
+            </>
           )}
           <Link
             to="/studio"
