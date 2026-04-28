@@ -249,7 +249,7 @@ const Assets = () => {
         title,
         format: studioFormat,
         media_type: selectedCategory.key,
-        input_data: inputData,
+        input_data: inputData as unknown as Record<string, never>,
         template_id: selectedTpl.id,
         background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
         status: "draft",
