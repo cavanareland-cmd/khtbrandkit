@@ -244,7 +244,7 @@ const Assets = () => {
         : selectedCategory.format === "1080x1080" ? "instagram_post"
         : "instagram_post";
 
-      const { data, error } = await supabase.from("creations").insert({
+      const { data, error } = await supabase.from("creations").insert([{
         user_id: user.id,
         title,
         format: studioFormat,
@@ -253,7 +253,7 @@ const Assets = () => {
         template_id: selectedTpl.id,
         background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
         status: "draft",
-      }).select().single();
+      }]).select().single();
 
       if (error || !data) throw error || new Error("Gagal membuat draft");
       toast.success("Draft dibuat. Lanjut ke editor…");
