@@ -230,9 +230,11 @@ export type Database = {
       templates: {
         Row: {
           analysis: Json | null
+          category: string | null
           created_at: string
           file_type: string
           file_url: string
+          format: string | null
           id: string
           name: string
           original_format: string | null
@@ -243,9 +245,11 @@ export type Database = {
         }
         Insert: {
           analysis?: Json | null
+          category?: string | null
           created_at?: string
           file_type: string
           file_url: string
+          format?: string | null
           id?: string
           name: string
           original_format?: string | null
@@ -256,9 +260,11 @@ export type Database = {
         }
         Update: {
           analysis?: Json | null
+          category?: string | null
           created_at?: string
           file_type?: string
           file_url?: string
+          format?: string | null
           id?: string
           name?: string
           original_format?: string | null
