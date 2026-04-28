@@ -251,7 +251,7 @@ const Assets = () => {
         media_type: selectedCategory.key,
         input_data: inputData,
         template_id: selectedTpl.id,
-        background_image_url: selectedTpl.preview_url ?? selectedTpl.file_url,
+        background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
         status: "draft",
       }).select().single();
 
