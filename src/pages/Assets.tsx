@@ -128,6 +128,21 @@ const Assets = () => {
     loadTemplates(cat.key);
   };
 
+  const runAnalyze = useCallback(async (templateId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-template", {
+        body: { templateId },
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast.success("AI selesai memetakan layer template ✨");
+        if (selectedCategory) loadTemplates(selectedCategory.key);
+      }
+    } catch (e) {
+      toast.error("AI analyze gagal: " + (e instanceof Error ? e.message : "error"));
+    }
+  }, [selectedCategory, loadTemplates]);
+
   const handleUpload = async (file: File) => {
     if (!user || !selectedCategory) return;
     if (file.size > 25 * 1024 * 1024) {
@@ -145,7 +160,7 @@ const Assets = () => {
       const fileUrl = supabase.storage.from("templates").getPublicUrl(path).data.publicUrl;
       const previewUrl = file.type.startsWith("image/") ? fileUrl : null;
 
-      const { error: insErr } = await supabase.from("templates").insert({
+      const { data: inserted, error: insErr } = await supabase.from("templates").insert({
         user_id: user.id,
         name: file.name,
         file_url: fileUrl,
@@ -155,15 +170,27 @@ const Assets = () => {
         status: previewUrl ? "uploaded" : "needs_export",
         category: selectedCategory.key,
         format: selectedCategory.format,
-      });
+      }).select().single();
       if (insErr) throw insErr;
-      toast.success("Template diupload!");
+
+      toast.success("Template diupload! AI sedang memetakan layer…");
       loadTemplates(selectedCategory.key);
+
+      // Auto-trigger AI analysis untuk template gambar
+      if (previewUrl && inserted?.id) {
+        runAnalyze(inserted.id);
+      }
     } catch (e) {
       toast.error("Upload gagal: " + (e instanceof Error ? e.message : "error"));
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleReanalyze = async (e: React.MouseEvent, templateId: string) => {
+    e.stopPropagation();
+    toast.info("Memulai analisis ulang…");
+    await runAnalyze(templateId);
   };
 
   const handleSelectTemplate = (t: TemplateRow) => {
