@@ -424,14 +424,34 @@ const Assets = () => {
                       </div>
                       <div className="p-2">
                         <p className="text-xs font-medium truncate">{t.name}</p>
-                        <div className="flex items-center gap-1 mt-1">
-                          {t.status === "ready" && (
-                            <Badge variant="secondary" className="text-[9px] h-4 px-1.5 gap-0.5">
-                              <Sparkles className="w-2 h-2" /> AI Ready
-                            </Badge>
-                          )}
-                          {t.status === "uploaded" && (
-                            <Badge variant="outline" className="text-[9px] h-4 px-1.5">Belum analisis</Badge>
+                        <div className="flex items-center justify-between gap-1 mt-1">
+                          <div className="flex items-center gap-1 min-w-0">
+                            {t.status === "ready" && (
+                              <Badge variant="secondary" className="text-[9px] h-4 px-1.5 gap-0.5">
+                                <Sparkles className="w-2 h-2" /> AI Ready
+                              </Badge>
+                            )}
+                            {t.status === "analyzing" && (
+                              <Badge variant="outline" className="text-[9px] h-4 px-1.5 gap-0.5 border-primary/40 text-primary">
+                                <Loader2 className="w-2 h-2 animate-spin" /> Menganalisis
+                              </Badge>
+                            )}
+                            {t.status === "uploaded" && (
+                              <Badge variant="outline" className="text-[9px] h-4 px-1.5">Belum analisis</Badge>
+                            )}
+                            {t.status === "failed" && (
+                              <Badge variant="destructive" className="text-[9px] h-4 px-1.5">Gagal</Badge>
+                            )}
+                          </div>
+                          {(t.status === "uploaded" || t.status === "failed" || t.status === "ready") && t.preview_url && (
+                            <span
+                              role="button"
+                              onClick={(e) => handleReanalyze(e as unknown as React.MouseEvent, t.id)}
+                              className="text-[9px] text-primary hover:underline cursor-pointer shrink-0"
+                              title="Analisis ulang dengan AI"
+                            >
+                              {t.status === "ready" ? "Re-AI" : "Analisis"}
+                            </span>
                           )}
                         </div>
                       </div>
