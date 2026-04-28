@@ -197,6 +197,29 @@ const Assets = () => {
     setSelectedTpl(t);
     setStep("form");
     if (!title) setTitle(`Promo ${selectedCategory?.title ?? ""}`);
+
+    // Auto-prefill form dari hasil AI analysis (OCR teks per region)
+    const analysis = (t.analysis ?? {}) as Record<string, unknown>;
+    const regions = Array.isArray(analysis.regions) ? (analysis.regions as Array<Record<string, unknown>>) : [];
+    if (regions.length > 0) {
+      const headlineText = regions.find(r => r.type === "headline")?.detected_text as string | undefined;
+      const subheadText = regions.find(r => r.type === "subheadline")?.detected_text as string | undefined;
+      const bodyTexts = regions.filter(r => r.type === "body").map(r => r.detected_text as string).filter(Boolean);
+      const ctaText = regions.find(r => r.type === "cta")?.detected_text as string | undefined;
+
+      if (headlineText && !packageName) setPackageName(headlineText.replace(/PAKET\s+/i, "").trim());
+      const allTxt = [headlineText, subheadText, ...bodyTexts].filter(Boolean).join(" ");
+      const priceMatch = allTxt.match(/Rp\.?\s*[\d.,]+\s*(juta|jt|m)?/i);
+      if (priceMatch && !price) setPrice(priceMatch[0]);
+      const dateMatch = allTxt.match(/\d{1,2}\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\s+\d{4}/i);
+      if (dateMatch && !departureDate) setDepartureDate(dateMatch[0]);
+      const durMatch = allTxt.match(/\d+\s*-?\s*(hari|H)\b/i);
+      if (durMatch && !duration) setDuration(durMatch[0]);
+      if (bodyTexts.length > 0 && !inclusions) setInclusions(bodyTexts.join("\n"));
+      if (ctaText && !cta.includes(ctaText)) setCta(ctaText);
+
+      toast.success("Form di-prefill dari hasil AI analysis 🎯");
+    }
   };
 
   const handleContinueToEditor = async () => {
@@ -213,8 +236,9 @@ const Assets = () => {
         inclusions: inclusions.split("\n").map(s => s.trim()).filter(Boolean),
         cta,
         category: selectedCategory.key,
+        template_analysis: selectedTpl.analysis ?? null,
+        template_preview_url: selectedTpl.preview_url,
       };
-      // Map category → studio format
       const studioFormat =
         selectedCategory.format === "1080x1920" ? "instagram_story"
         : selectedCategory.format === "1080x1080" ? "instagram_post"
@@ -227,6 +251,7 @@ const Assets = () => {
         media_type: selectedCategory.key,
         input_data: inputData,
         template_id: selectedTpl.id,
+        background_image_url: selectedTpl.preview_url ?? selectedTpl.file_url,
         status: "draft",
       }).select().single();
 
