@@ -67,6 +67,7 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Mapping Font agar fitur Live Preview berfungsi
       fontFamily: {
         display: ['"Playfair Display"', 'serif'],
         body: ['Inter', 'sans-serif'],
