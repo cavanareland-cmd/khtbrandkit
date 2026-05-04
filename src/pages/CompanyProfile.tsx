@@ -445,7 +445,7 @@ const CompanyProfile = () => {
       {/* CTA / KONTAK */}
       <section id="contact" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
         <div className="container">
-          <div className="relative rounded-[2rem] bg-gradient-hero p-10 md:p-16 lg:p-20 overflow-hidden shadow-elegant">
+          <div className="relative rounded-3xl sm:rounded-[2rem] bg-gradient-hero p-6 sm:p-10 md:p-16 lg:p-20 overflow-hidden shadow-elegant">
             <div className="absolute inset-0 arabesque-pattern opacity-20" />
             <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
             <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-primary-glow/20 blur-3xl" />
