@@ -74,14 +74,14 @@ const CompanyProfile = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </div>
 
-        <div className="container relative py-28 md:py-40 lg:py-48">
-          <div className="max-w-3xl text-secondary-foreground space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 backdrop-blur-sm px-4 py-1.5 text-xs font-alt font-medium uppercase tracking-[0.25em] text-accent-soft">
+        <div className="container relative py-20 sm:py-28 md:py-40 lg:py-48">
+          <div className="max-w-3xl text-secondary-foreground space-y-6 sm:space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 backdrop-blur-sm px-3 py-1.5 text-[10px] sm:text-xs font-alt font-medium uppercase tracking-[0.2em] sm:tracking-[0.25em] text-accent-soft">
               <Moon className="h-3 w-3" />
               {str(hero.badge, "Company Profile · Sejak 2014")}
             </div>
 
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
+            <h1 className="font-display text-[2.25rem] leading-[1.1] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
               {str(hero.title_line1, "Memuliakan")}
               <br />
               <span className="text-accent italic">{str(hero.title_highlight, "Tamu Allah")}</span>
@@ -89,21 +89,21 @@ const CompanyProfile = () => {
               {str(hero.title_line3, "dengan Penuh Khidmat.")}
             </h1>
 
-            <p className="font-display italic text-xl md:text-2xl text-secondary-foreground/85 max-w-2xl leading-relaxed">
+            <p className="font-display italic text-base sm:text-xl md:text-2xl text-secondary-foreground/85 max-w-2xl leading-relaxed">
               {str(hero.tagline)}
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
               <a
                 href={str(hero.cta_primary_href, "#programs")}
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-accent-foreground shadow-elegant hover:shadow-glow transition-smooth"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-5 sm:px-7 py-3 sm:py-3.5 text-sm font-medium text-accent-foreground shadow-elegant hover:shadow-glow transition-smooth"
               >
                 {str(hero.cta_primary_label, "Lihat Program Kami")}
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href={str(hero.cta_secondary_href, "#contact")}
-                className="inline-flex items-center gap-2 rounded-full border border-secondary-foreground/30 bg-secondary-foreground/5 backdrop-blur-sm px-7 py-3.5 text-sm font-medium text-secondary-foreground hover:bg-secondary-foreground/10 transition-smooth"
+                className="inline-flex items-center gap-2 rounded-full border border-secondary-foreground/30 bg-secondary-foreground/5 backdrop-blur-sm px-5 sm:px-7 py-3 sm:py-3.5 text-sm font-medium text-secondary-foreground hover:bg-secondary-foreground/10 transition-smooth"
               >
                 {str(hero.cta_secondary_label, "Hubungi Kami")}
               </a>
@@ -112,15 +112,15 @@ const CompanyProfile = () => {
         </div>
 
         {/* Stats strip */}
-        <div className="container relative -mt-12 md:-mt-16 pb-16">
+        <div className="container relative -mt-8 sm:-mt-12 md:-mt-16 pb-12 sm:pb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border/50 rounded-2xl overflow-hidden shadow-elegant border border-border/50">
             {stats.map((s) => {
               const Icon = IconBy(s.content.icon, Award);
               return (
-                <div key={s.id} className="bg-card p-6 md:p-8 flex flex-col items-center text-center gap-2">
-                  <Icon className="h-5 w-5 text-accent mb-1" />
-                  <div className="font-display text-3xl md:text-4xl font-bold text-primary">{str(s.content.value)}</div>
-                  <div className="text-xs md:text-sm font-alt uppercase tracking-widest text-muted-foreground">
+                <div key={s.id} className="bg-card p-4 sm:p-6 md:p-8 flex flex-col items-center text-center gap-1.5 sm:gap-2">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent mb-1" />
+                  <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-primary">{str(s.content.value)}</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm font-alt uppercase tracking-widest text-muted-foreground leading-tight">
                     {str(s.content.label)}
                   </div>
                 </div>
