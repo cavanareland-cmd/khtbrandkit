@@ -37,25 +37,28 @@ const AssetGallery = () => {
   const iconList: IconItem[] = icons.entries.map((e) => e.data as unknown as IconItem);
 
   return (
-    <section id="assets" className="py-24 bg-background relative">
-      <div className="container">
-        <div className="max-w-2xl mb-8 flex items-start justify-between gap-4">
-          <div>
+    <section id="assets" className="py-12 md:py-24 bg-background relative">
+      <div className="container px-4 mx-auto">
+        {/* Header Section - Fix untuk image_5774df.png */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-12">
+          <div className="max-w-2xl">
             <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent mb-4">04 — Visual Assets</p>
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-4">Galeri Aset</h2>
-            <p className="text-lg text-muted-foreground">
-              Variasi logo dan ikonografi yang konsisten — siap digunakan di semua media komunikasi brand.
+            <h2 className="font-display text-3xl md:text-5xl font-bold text-secondary mb-4">Galeri Aset</h2>
+            <p className="text-base md:text-lg text-muted-foreground">
+              Variasi logo dan ikonografi yang konsisten — siap digunakan di semua media komunikasi brand **Karin Hidayah Tour**.
             </p>
           </div>
-          <EditButton onClick={() => setEditorOpen(true)} label="Edit Aset" />
+          <div className="shrink-0">
+            <EditButton onClick={() => setEditorOpen(true)} label="Edit Aset" />
+          </div>
         </div>
 
         {/* Logo Variants */}
         <h3 className="font-display text-2xl font-semibold text-foreground mb-6 mt-8">Variasi Logo</h3>
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-20">
           {logoVariants.map((v) => (
             <div key={v.title} className={`group rounded-2xl ${v.bg} ${v.border} border overflow-hidden shadow-md hover:shadow-elegant transition-smooth`}>
-              <div className="aspect-square flex items-center justify-center p-12 relative">
+              <div className="aspect-square flex items-center justify-center p-8 md:p-12 relative">
                 <img
                   src={v.image_url || defaultLogo}
                   alt={v.title}
@@ -65,8 +68,8 @@ const AssetGallery = () => {
                   {v.subtitle}
                 </div>
               </div>
-              <div className={`px-6 py-4 flex items-center justify-between border-t ${v.inverse ? "border-secondary-glow/30 bg-secondary" : "border-border bg-card"}`}>
-                <p className={`font-display font-semibold ${v.inverse ? "text-secondary-foreground" : "text-foreground"}`}>{v.title}</p>
+              <div className={`px-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t ${v.inverse ? "border-secondary-glow/30 bg-secondary" : "border-border bg-card"}`}>
+                <p className={`font-display font-semibold text-sm md:text-base ${v.inverse ? "text-secondary-foreground" : "text-foreground"}`}>{v.title}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleDownload(`${v.title} SVG`)}
@@ -76,9 +79,9 @@ const AssetGallery = () => {
                   </button>
                   <button
                     onClick={() => handleDownload(`${v.title} PNG`)}
-                    className="text-[10px] font-alt uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary-glow transition-smooth"
+                    className="text-[10px] font-alt uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary-glow transition-smooth flex items-center gap-1 justify-center"
                   >
-                    <Download className="h-3 w-3 inline mr-1" /> PNG
+                    <Download className="h-3 w-3" /> PNG
                   </button>
                 </div>
               </div>
@@ -87,9 +90,9 @@ const AssetGallery = () => {
         </div>
 
         {/* Icons */}
-        <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
+        <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-8 gap-3">
           <h3 className="font-display text-2xl font-semibold text-foreground">Pustaka Ikon Umrah</h3>
-          <p className="font-alt text-xs uppercase tracking-widest text-muted-foreground">Line Art · 2px Stroke · Konsisten</p>
+          <p className="font-alt text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground">Line Art · 2px Stroke · Konsisten</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
           {iconList.map((item) => {
@@ -97,13 +100,13 @@ const AssetGallery = () => {
             return (
               <div
                 key={item.name}
-                className="group rounded-2xl bg-card border border-border p-6 flex flex-col items-center text-center shadow-sm hover:shadow-elegant hover:-translate-y-1 transition-smooth"
+                className="group rounded-2xl bg-card border border-border p-4 md:p-6 flex flex-col items-center text-center shadow-sm hover:shadow-elegant hover:-translate-y-1 transition-smooth"
               >
-                <div className="h-16 w-16 rounded-2xl bg-accent-soft/50 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-smooth text-secondary">
-                  <Icon className="h-8 w-8" strokeWidth={1.5} />
+                <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-accent-soft/50 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-smooth text-secondary">
+                  <Icon className="h-6 w-6 md:h-8 md:w-8" strokeWidth={1.5} />
                 </div>
-                <p className="font-display font-semibold text-sm text-foreground">{item.name}</p>
-                <p className="text-[10px] font-alt uppercase tracking-widest text-muted-foreground mt-1">{item.desc}</p>
+                <p className="font-display font-semibold text-xs md:text-sm text-foreground truncate w-full px-1">{item.name}</p>
+                <p className="text-[9px] md:text-[10px] font-alt uppercase tracking-widest text-muted-foreground mt-1 truncate w-full px-1">{item.desc}</p>
                 <button
                   onClick={() => handleDownload(item.name)}
                   className="mt-4 text-[10px] font-alt uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-smooth flex items-center gap-1"
