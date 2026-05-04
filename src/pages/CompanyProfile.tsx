@@ -131,7 +131,7 @@ const CompanyProfile = () => {
       </section>
 
       {/* TENTANG */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 arabesque-pattern opacity-50" />
         <div className="container relative">
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -161,7 +161,7 @@ const CompanyProfile = () => {
               <div className="inline-flex items-center gap-2 rounded-full bg-primary/5 border border-primary/20 px-4 py-1.5 text-xs font-alt uppercase tracking-[0.25em] text-primary">
                 <BookOpen className="h-3 w-3" /> {str(about.eyebrow, "Tentang Kami")}
               </div>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-secondary leading-tight">
                 {str(about.title, "Lebih dari satu dekade menemani perjalanan suci.")}
               </h2>
               <p className="text-lg text-foreground/75 leading-relaxed">{str(about.paragraph_1)}</p>
@@ -181,7 +181,7 @@ const CompanyProfile = () => {
       </section>
 
       {/* VISI MISI */}
-      <section className="py-24 md:py-28 bg-gradient-to-br from-secondary via-secondary to-secondary-glow text-secondary-foreground relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-28 bg-gradient-to-br from-secondary via-secondary to-secondary-glow text-secondary-foreground relative overflow-hidden">
         <div className="absolute inset-0 arabesque-pattern opacity-20" />
         <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
@@ -189,7 +189,7 @@ const CompanyProfile = () => {
         <div className="container relative">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent">{str(vm.eyebrow, "Visi & Misi")}</p>
-            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
               {str(vm.title, "Arah perjalanan kami.")}
             </h2>
           </div>
@@ -219,11 +219,11 @@ const CompanyProfile = () => {
       </section>
 
       {/* NILAI-NILAI */}
-      <section className="py-24 md:py-32">
+      <section className="py-16 sm:py-24 md:py-32">
         <div className="container">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <p className="font-alt text-xs uppercase tracking-[0.3em] text-primary">Nilai Kami</p>
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-secondary leading-tight">
               Empat pilar <span className="italic text-primary">pelayanan</span>.
             </h2>
             <p className="text-foreground/70 text-lg">
@@ -257,12 +257,12 @@ const CompanyProfile = () => {
       </section>
 
       {/* PROGRAM */}
-      <section id="programs" className="py-24 md:py-32 bg-gradient-soft relative">
+      <section id="programs" className="py-16 sm:py-24 md:py-32 bg-gradient-soft relative">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
             <div className="space-y-4 max-w-xl">
               <p className="font-alt text-xs uppercase tracking-[0.3em] text-primary">Program Unggulan</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-secondary leading-tight">
                 Pilih perjalanan <span className="italic text-primary">terbaik</span> Anda.
               </h2>
             </div>
@@ -321,12 +321,12 @@ const CompanyProfile = () => {
       </section>
 
       {/* JOURNEY / TIMELINE */}
-      <section className="py-24 md:py-32 relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
             <div className="lg:sticky lg:top-32 space-y-6">
               <p className="font-alt text-xs uppercase tracking-[0.3em] text-primary">Perjalanan Kami</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-secondary leading-tight">
                 Satu dekade <span className="italic text-primary">amanah</span> & pertumbuhan.
               </h2>
               <p className="text-foreground/70 text-lg leading-relaxed">
@@ -362,12 +362,12 @@ const CompanyProfile = () => {
       </section>
 
       {/* FASILITAS (statis - tidak via CMS sesuai design lama) */}
-      <section className="py-24 md:py-32 bg-secondary text-secondary-foreground relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 bg-secondary text-secondary-foreground relative overflow-hidden">
         <div className="absolute inset-0 arabesque-pattern opacity-20" />
         <div className="container relative">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <p className="font-alt text-xs uppercase tracking-[0.3em] text-accent">Fasilitas Premium</p>
-            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
               Kenyamanan dalam <span className="italic text-accent">setiap detail</span>.
             </h2>
           </div>
@@ -395,12 +395,12 @@ const CompanyProfile = () => {
       </section>
 
       {/* TESTIMONI */}
-      <section className="py-24 md:py-32 bg-gradient-soft">
+      <section className="py-16 sm:py-24 md:py-32 bg-gradient-soft">
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-12 items-center mb-16">
             <div className="lg:col-span-5 space-y-4">
               <p className="font-alt text-xs uppercase tracking-[0.3em] text-primary">Cerita Jamaah</p>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-secondary leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-secondary leading-tight">
                 Suara <span className="italic text-primary">tamu Allah</span> yang telah pulang.
               </h2>
             </div>
@@ -443,7 +443,7 @@ const CompanyProfile = () => {
       </section>
 
       {/* CTA / KONTAK */}
-      <section id="contact" className="py-24 md:py-32 relative overflow-hidden">
+      <section id="contact" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
         <div className="container">
           <div className="relative rounded-[2rem] bg-gradient-hero p-10 md:p-16 lg:p-20 overflow-hidden shadow-elegant">
             <div className="absolute inset-0 arabesque-pattern opacity-20" />
@@ -456,7 +456,7 @@ const CompanyProfile = () => {
                   <Sparkles className="h-3 w-3" />
                   Konsultasi Gratis
                 </div>
-                <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05]">
+                <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05]">
                   {str(cta.title, "Siap menjadi tamu Allah?")}
                 </h2>
                 <p className="text-lg text-secondary-foreground/85 max-w-md leading-relaxed">
