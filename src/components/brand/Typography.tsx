@@ -5,7 +5,6 @@ import TypographyEditor from "./admin/TypographyEditor";
 
 type FontEntry = { name: string; role: string; className: string; weight: string; sample: string; desc: string };
 
-// Ukuran font sekarang menggunakan breakpoint (contoh: text-3xl di mobile, md:text-6xl di desktop)
 const scale = [
   { tag: "H1", size: "60px / 3.75rem", className: "text-3xl md:text-6xl font-bold", sample: "Pelayanan Amanah" },
   { tag: "H2", size: "48px / 3rem", className: "text-2xl md:text-5xl font-bold", sample: "Mantapkan Niat Ibadah" },
@@ -46,7 +45,7 @@ const Typography = () => {
           <EditButton onClick={() => setEditorOpen(true)} label="Edit" />
         </div>
 
-        {/* Font Families */}
+        {/* Font Families Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 mt-8">
           {fonts.map((f) => (
             <div key={f.name + f.className} className="rounded-2xl bg-card border border-border p-6 md:p-8 shadow-md hover:shadow-elegant transition-smooth group overflow-hidden">
@@ -63,7 +62,7 @@ const Typography = () => {
           ))}
         </div>
 
-        {/* Type Scale */}
+        {/* Type Scale Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           <div className="rounded-2xl bg-card border border-border p-5 md:p-8 shadow-md overflow-hidden">
             <h4 className="font-alt text-[10px] md:text-xs uppercase tracking-widest text-accent mb-6">Heading Scale — {displayName}</h4>
@@ -71,7 +70,6 @@ const Typography = () => {
               {scale.map((s) => (
                 <div key={s.tag} className="flex flex-col md:flex-row md:items-baseline justify-between gap-2 md:gap-6 border-b border-border/50 pb-4 last:border-0">
                   <div className="flex-1 min-w-0">
-                    {/* Menggunakan break-words alih-alih truncate agar teks tidak terpotong seperti di image_57e963.png */}
                     <p className={`font-display ${s.className} text-secondary leading-tight break-words`}>{s.sample}</p>
                   </div>
                   <div className="text-left md:text-right shrink-0 flex md:block gap-2 items-center">
@@ -101,7 +99,7 @@ const Typography = () => {
           </div>
         </div>
 
-        {/* Interactive Tester */}
+        {/* --- SECTION AKTIF: INTERACTIVE TESTER --- */}
         <div className="rounded-3xl bg-secondary text-secondary-foreground p-6 md:p-12 shadow-navy relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
           <div className="relative space-y-6">
