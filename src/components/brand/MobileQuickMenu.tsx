@@ -10,8 +10,8 @@ import {
   FolderHeart,
   Wand2,
   Plus,
-  Plane,
   Phone,
+  Shield, // Tambahan ikon untuk Admin
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,12 +30,12 @@ const TOP: Tile[] = [
 
 const GRID: { to: string; label: string; icon: LucideIcon; bg: string; fg: string }[] = [
   { to: "/assets", label: "Template", icon: LayoutTemplate, bg: "bg-rose-100", fg: "text-rose-600" },
-  { to: "/admin?tab=media", label: "Media", icon: ImageIcon, bg: "bg-amber-100", fg: "text-amber-600" },
+  { to: "/assets", label: "Media", icon: ImageIcon, bg: "bg-amber-100", fg: "text-amber-600" },
   { to: "/", label: "Warna", icon: Palette, bg: "bg-pink-100", fg: "text-pink-600" },
   { to: "/", label: "Font", icon: Type, bg: "bg-emerald-100", fg: "text-emerald-600" },
   { to: "/studio", label: "Promo", icon: Megaphone, bg: "bg-sky-100", fg: "text-sky-600" },
   { to: "/company-profile", label: "Profil", icon: Building2, bg: "bg-violet-100", fg: "text-violet-600" },
-  { to: "/studio", label: "AI", icon: Sparkles, bg: "bg-orange-100", fg: "text-orange-600" },
+  { to: "/admin", label: "Admin", icon: Shield, bg: "bg-orange-100", fg: "text-orange-600" },
   { to: "/company-profile#contact", label: "Kontak", icon: Phone, bg: "bg-slate-100", fg: "text-slate-600" },
 ];
 
