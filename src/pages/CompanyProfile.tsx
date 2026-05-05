@@ -26,6 +26,7 @@ import jamaah from "@/assets/company-jamaah.jpg";
 import hotelImg from "@/assets/company-hotel.jpg";
 import Header from "@/components/brand/Header";
 import Footer from "@/components/brand/Footer";
+import ExportProfile from "@/components/brand/ExportProfile";
 import { useCmsPage } from "@/hooks/useCmsSections";
 
 // ===== ICON MAP (untuk konten dari CMS) =====
@@ -59,6 +60,9 @@ const CompanyProfile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <ExportProfile />
+
+      <div id="company-profile-export-root">
 
       {/* HERO */}
       <section className="relative overflow-hidden">
@@ -507,6 +511,8 @@ const CompanyProfile = () => {
           </div>
         </div>
       </section>
+
+      </div>
 
       <Footer />
     </div>
