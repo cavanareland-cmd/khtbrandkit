@@ -9,10 +9,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import logoUrl from "@/assets/karin-logo.png";
 
 type ExportKind = "pdf" | "pptx";
 
 const FILE_NAME = "Karin-Hidayah-Tour-Company-Profile";
+const COMPANY_NAME = "Karin Hidayah Tour";
+const COMPANY_TAGLINE = "Company Profile · Umrah & Haji Plus";
+
+const formatDateID = (d = new Date()) =>
+  d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
+async function loadImageAsDataUrl(src: string): Promise<string> {
+  const res = await fetch(src);
+  const blob = await res.blob();
+  return await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onloadend = () => resolve(r.result as string);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
 
 async function captureNode(node: HTMLElement, scale = 1.5) {
   const html2canvas = (await import("html2canvas")).default;
@@ -23,6 +40,57 @@ async function captureNode(node: HTMLElement, scale = 1.5) {
     logging: false,
     windowWidth: node.scrollWidth,
   });
+}
+
+// Brand palette (selaras dengan tema secondary di app)
+const BRAND_BG = "#2A0F1A"; // deep maroon
+const BRAND_ACCENT = "#C9A35C"; // gold
+
+function drawPdfCover(pdf: import("jspdf").jsPDF, logoDataUrl: string) {
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  // Background
+  pdf.setFillColor(BRAND_BG);
+  pdf.rect(0, 0, pageW, pageH, "F");
+
+  // Accent bar
+  pdf.setFillColor(BRAND_ACCENT);
+  pdf.rect(0, pageH - 24, pageW, 24, "F");
+
+  // Logo (centered)
+  const logoSize = 140;
+  try {
+    pdf.addImage(
+      logoDataUrl,
+      "PNG",
+      (pageW - logoSize) / 2,
+      pageH * 0.22,
+      logoSize,
+      logoSize,
+      undefined,
+      "FAST",
+    );
+  } catch {
+    /* ignore */
+  }
+
+  // Company name
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(34);
+  pdf.text(COMPANY_NAME, pageW / 2, pageH * 0.22 + logoSize + 60, { align: "center" });
+
+  // Tagline
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(14);
+  pdf.setTextColor(220, 200, 170);
+  pdf.text(COMPANY_TAGLINE, pageW / 2, pageH * 0.22 + logoSize + 88, { align: "center" });
+
+  // Export date
+  pdf.setFontSize(11);
+  pdf.setTextColor(255, 255, 255);
+  pdf.text(`Diekspor pada ${formatDateID()}`, pageW / 2, pageH - 56, { align: "center" });
 }
 
 async function exportPdf() {
@@ -37,6 +105,10 @@ async function exportPdf() {
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
 
+  // Cover page
+  const logoDataUrl = await loadImageAsDataUrl(logoUrl).catch(() => "");
+  drawPdfCover(pdf, logoDataUrl);
+
   for (let i = 0; i < targets.length; i++) {
     const canvas = await captureNode(targets[i]);
     const imgData = canvas.toDataURL("image/jpeg", 0.92);
@@ -49,7 +121,7 @@ async function exportPdf() {
     }
     const x = (pageW - w) / 2;
     const y = (pageH - h) / 2;
-    if (i > 0) pdf.addPage();
+    pdf.addPage();
     pdf.addImage(imgData, "JPEG", x, y, w, h, undefined, "FAST");
   }
 
@@ -66,10 +138,62 @@ async function exportPptx() {
   const PptxGenJS = (await import("pptxgenjs")).default;
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 in
-  pptx.title = "Karin Hidayah Tour — Company Profile";
+  pptx.title = `${COMPANY_NAME} — Company Profile`;
 
   const slideW = 13.333;
   const slideH = 7.5;
+
+  // Cover slide
+  const logoDataUrl = await loadImageAsDataUrl(logoUrl).catch(() => "");
+  const cover = pptx.addSlide();
+  cover.background = { color: BRAND_BG.replace("#", "") };
+  if (logoDataUrl) {
+    cover.addImage({
+      data: logoDataUrl,
+      x: (slideW - 2) / 2,
+      y: 1.6,
+      w: 2,
+      h: 2,
+    });
+  }
+  cover.addText(COMPANY_NAME, {
+    x: 0.5,
+    y: 3.9,
+    w: slideW - 1,
+    h: 0.9,
+    fontSize: 44,
+    bold: true,
+    color: "FFFFFF",
+    align: "center",
+    fontFace: "Georgia",
+  });
+  cover.addText(COMPANY_TAGLINE, {
+    x: 0.5,
+    y: 4.8,
+    w: slideW - 1,
+    h: 0.5,
+    fontSize: 18,
+    color: "DCC8AA",
+    align: "center",
+    fontFace: "Calibri",
+  });
+  cover.addText(`Diekspor pada ${formatDateID()}`, {
+    x: 0.5,
+    y: 6.6,
+    w: slideW - 1,
+    h: 0.4,
+    fontSize: 12,
+    color: "FFFFFF",
+    align: "center",
+  });
+  cover.addShape("rect", {
+    x: 0,
+    y: slideH - 0.25,
+    w: slideW,
+    h: 0.25,
+    fill: { color: BRAND_ACCENT.replace("#", "") },
+    line: { color: BRAND_ACCENT.replace("#", "") },
+  });
 
   for (const node of targets) {
     const canvas = await captureNode(node, 1.25);
@@ -94,6 +218,7 @@ async function exportPptx() {
 
   await pptx.writeFile({ fileName: `${FILE_NAME}.pptx` });
 }
+
 
 const ExportProfile = () => {
   const [loading, setLoading] = useState<ExportKind | null>(null);
