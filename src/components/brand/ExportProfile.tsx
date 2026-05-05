@@ -124,7 +124,7 @@ const ExportProfile = () => {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 print:hidden">
+    <section className="container px-4 mx-auto pb-12 md:pb-16 flex justify-center print:hidden">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -171,7 +171,7 @@ const ExportProfile = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </section>
   );
 };
 

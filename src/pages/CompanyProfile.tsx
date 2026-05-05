@@ -60,7 +60,6 @@ const CompanyProfile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <ExportProfile />
 
       <div id="company-profile-export-root">
 
@@ -513,6 +512,8 @@ const CompanyProfile = () => {
       </section>
 
       </div>
+
+      <ExportProfile />
 
       <Footer />
     </div>
