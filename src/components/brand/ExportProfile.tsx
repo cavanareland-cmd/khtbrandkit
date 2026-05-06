@@ -228,7 +228,7 @@ async function exportPptx() {
   });
 
   for (const node of targets) {
-    const canvas = await captureNode(node, 1.25);
+    const canvas = await captureNode(node, { scale: 1.25, width: RENDER_WIDTH });
     const data = canvas.toDataURL("image/jpeg", 0.9);
     const ratio = canvas.width / canvas.height;
     let w = slideW;
