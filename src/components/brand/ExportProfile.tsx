@@ -31,14 +31,16 @@ async function loadImageAsDataUrl(src: string): Promise<string> {
   });
 }
 
-async function captureNode(node: HTMLElement, scale = 1.5) {
+async function captureNode(node: HTMLElement, opts: { scale?: number; width?: number } = {}) {
   const html2canvas = (await import("html2canvas")).default;
+  const { scale = 1.5, width } = opts;
   return html2canvas(node, {
     scale,
     useCORS: true,
     backgroundColor: "#ffffff",
     logging: false,
-    windowWidth: node.scrollWidth,
+    width,
+    windowWidth: width ?? node.scrollWidth,
   });
 }
 
@@ -93,6 +95,11 @@ function drawPdfCover(pdf: import("jspdf").jsPDF, logoDataUrl: string) {
   pdf.text(`Diekspor pada ${formatDateID()}`, pageW / 2, pageH - 56, { align: "center" });
 }
 
+// Konsisten margin untuk semua halaman PDF (pt)
+const PDF_MARGIN = 28;
+// Lebar render sumber agar layout breakpoint masuk "desktop landscape"
+const RENDER_WIDTH = 1600;
+
 async function exportPdf() {
   const root = document.getElementById("company-profile-export-root");
   if (!root) throw new Error("Konten tidak ditemukan");
@@ -104,25 +111,50 @@ async function exportPdf() {
   const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
+  const contentW = pageW - PDF_MARGIN * 2;
+  const contentH = pageH - PDF_MARGIN * 2;
 
   // Cover page
   const logoDataUrl = await loadImageAsDataUrl(logoUrl).catch(() => "");
   drawPdfCover(pdf, logoDataUrl);
 
   for (let i = 0; i < targets.length; i++) {
-    const canvas = await captureNode(targets[i]);
+    const canvas = await captureNode(targets[i], { scale: 1.5, width: RENDER_WIDTH });
     const imgData = canvas.toDataURL("image/jpeg", 0.92);
-    const ratio = canvas.width / canvas.height;
-    let w = pageW;
-    let h = w / ratio;
-    if (h > pageH) {
-      h = pageH;
-      w = h * ratio;
+
+    // Skala: lebar canvas → contentW
+    const scale = contentW / canvas.width;
+    const fullH = canvas.height * scale;
+
+    if (fullH <= contentH) {
+      // Muat 1 halaman, vertikal di-center
+      pdf.addPage();
+      const y = PDF_MARGIN + (contentH - fullH) / 2;
+      pdf.addImage(imgData, "JPEG", PDF_MARGIN, y, contentW, fullH, undefined, "FAST");
+    } else {
+      // Slice ke beberapa halaman supaya tidak ada teks terpotong di luar margin
+      const sliceHeightPx = canvas.height * (contentH / fullH);
+      let offset = 0;
+      while (offset < canvas.height) {
+        const remaining = canvas.height - offset;
+        const sliceH = Math.min(sliceHeightPx, remaining);
+
+        const slice = document.createElement("canvas");
+        slice.width = canvas.width;
+        slice.height = sliceH;
+        const ctx = slice.getContext("2d");
+        if (!ctx) break;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, slice.width, slice.height);
+        ctx.drawImage(canvas, 0, offset, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+        const sliceData = slice.toDataURL("image/jpeg", 0.92);
+        const drawH = sliceH * scale;
+        pdf.addPage();
+        pdf.addImage(sliceData, "JPEG", PDF_MARGIN, PDF_MARGIN, contentW, drawH, undefined, "FAST");
+        offset += sliceH;
+      }
     }
-    const x = (pageW - w) / 2;
-    const y = (pageH - h) / 2;
-    pdf.addPage();
-    pdf.addImage(imgData, "JPEG", x, y, w, h, undefined, "FAST");
   }
 
   pdf.save(`${FILE_NAME}.pdf`);
@@ -196,7 +228,7 @@ async function exportPptx() {
   });
 
   for (const node of targets) {
-    const canvas = await captureNode(node, 1.25);
+    const canvas = await captureNode(node, { scale: 1.25, width: RENDER_WIDTH });
     const data = canvas.toDataURL("image/jpeg", 0.9);
     const ratio = canvas.width / canvas.height;
     let w = slideW;
