@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2 } from "lucide-react";
+import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2, Eye, EyeOff, RefreshCw, Monitor, Tablet, Smartphone } from "lucide-react";
 import logo from "@/assets/karin-logo.png";
 import PageEditor from "@/components/admin/PageEditor";
 import TemplatesAdmin from "@/components/admin/TemplatesAdmin";
@@ -11,12 +11,17 @@ import MediaAdmin from "@/components/admin/MediaAdmin";
 import CreationsAdmin from "@/components/admin/CreationsAdmin";
 
 type Tab = "company-profile" | "index" | "templates" | "media" | "creations";
+type Device = "desktop" | "tablet" | "mobile";
+const DEVICE_W: Record<Device, string> = { desktop: "100%", tablet: "768px", mobile: "390px" };
 
 const Admin = () => {
   const { user, loading } = useAuthSession();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [tab, setTab] = useState<Tab>((params.get("tab") as Tab) || "company-profile");
+  const [showPreview, setShowPreview] = useState(true);
+  const [device, setDevice] = useState<Device>("desktop");
+  const [previewKey, setPreviewKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth?redirect=/admin");
@@ -120,27 +125,71 @@ const Admin = () => {
               <p className="text-xs text-muted-foreground">Login sebagai {user.email}</p>
             </div>
             {(tab === "company-profile" || tab === "index") && (
-              <Button asChild variant="outline" size="sm">
-                <a
-                  href={tab === "index" ? "/" : `/${tab}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="gap-1.5"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" /> Buka Halaman
-                </a>
-              </Button>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 rounded-md border border-border bg-card p-0.5">
+                  <Button size="icon" variant={device === "desktop" ? "secondary" : "ghost"} onClick={() => setDevice("desktop")} className="h-7 w-7" title="Desktop">
+                    <Monitor className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button size="icon" variant={device === "tablet" ? "secondary" : "ghost"} onClick={() => setDevice("tablet")} className="h-7 w-7" title="Tablet">
+                    <Tablet className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button size="icon" variant={device === "mobile" ? "secondary" : "ghost"} onClick={() => setDevice("mobile")} className="h-7 w-7" title="Mobile">
+                    <Smartphone className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setPreviewKey((k) => k + 1)} className="gap-1.5" title="Refresh preview">
+                  <RefreshCw className="h-3.5 w-3.5" />
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setShowPreview((v) => !v)} className="gap-1.5">
+                  {showPreview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  {showPreview ? "Sembunyikan" : "Tampilkan"} Preview
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <a
+                    href={tab === "index" ? "/" : `/${tab}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="gap-1.5"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> Buka
+                  </a>
+                </Button>
+              </div>
             )}
           </div>
         </header>
 
-        <div className="p-6">
-          {tab === "company-profile" && <PageEditor pageSlug="company-profile" />}
-          {tab === "index" && <PageEditor pageSlug="index" />}
-          {tab === "templates" && <TemplatesAdmin />}
-          {tab === "media" && <MediaAdmin />}
-          {tab === "creations" && <CreationsAdmin />}
-        </div>
+        {(tab === "company-profile" || tab === "index") && showPreview ? (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-0 h-[calc(100vh-73px)]">
+            <div className="overflow-y-auto p-6 border-r border-border">
+              {tab === "company-profile" && <PageEditor pageSlug="company-profile" />}
+              {tab === "index" && <PageEditor pageSlug="index" />}
+            </div>
+            <div className="bg-muted/40 overflow-hidden flex flex-col">
+              <div className="px-4 py-2 border-b border-border bg-card flex items-center justify-between text-xs">
+                <span className="font-alt uppercase tracking-widest text-muted-foreground">Live Preview</span>
+                <span className="text-muted-foreground">{device} · auto-sync</span>
+              </div>
+              <div className="flex-1 overflow-auto flex justify-center p-4">
+                <iframe
+                  key={previewKey}
+                  src={tab === "index" ? "/" : `/${tab}`}
+                  title="Live Preview"
+                  className="bg-background rounded-md shadow-lg border border-border h-full transition-all"
+                  style={{ width: DEVICE_W[device], maxWidth: "100%" }}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6">
+            {tab === "company-profile" && <PageEditor pageSlug="company-profile" />}
+            {tab === "index" && <PageEditor pageSlug="index" />}
+            {tab === "templates" && <TemplatesAdmin />}
+            {tab === "media" && <MediaAdmin />}
+            {tab === "creations" && <CreationsAdmin />}
+          </div>
+        )}
       </main>
     </div>
   );
