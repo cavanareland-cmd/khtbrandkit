@@ -11,12 +11,17 @@ import MediaAdmin from "@/components/admin/MediaAdmin";
 import CreationsAdmin from "@/components/admin/CreationsAdmin";
 
 type Tab = "company-profile" | "index" | "templates" | "media" | "creations";
+type Device = "desktop" | "tablet" | "mobile";
+const DEVICE_W: Record<Device, string> = { desktop: "100%", tablet: "768px", mobile: "390px" };
 
 const Admin = () => {
   const { user, loading } = useAuthSession();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [tab, setTab] = useState<Tab>((params.get("tab") as Tab) || "company-profile");
+  const [showPreview, setShowPreview] = useState(true);
+  const [device, setDevice] = useState<Device>("desktop");
+  const [previewKey, setPreviewKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth?redirect=/admin");
