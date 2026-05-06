@@ -3,7 +3,15 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2, Eye, EyeOff, RefreshCw, Monitor, Tablet, Smartphone } from "lucide-react";
+import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2, Eye, EyeOff, RefreshCw, Monitor, Tablet, Smartphone, Download, Presentation } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logo from "@/assets/karin-logo.png";
 import PageEditor from "@/components/admin/PageEditor";
 import TemplatesAdmin from "@/components/admin/TemplatesAdmin";
@@ -154,6 +162,41 @@ const Admin = () => {
                     <ExternalLink className="h-3.5 w-3.5" /> Buka
                   </a>
                 </Button>
+                {tab === "company-profile" && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                        <Download className="h-3.5 w-3.5" /> Export
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-60">
+                      <DropdownMenuLabel>Unduh Company Profile</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild className="gap-3 py-3">
+                        <a href="/company-profile?export=pdf" target="_blank" rel="noreferrer">
+                          <span className="h-9 w-9 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+                            <FileText className="h-4 w-4" />
+                          </span>
+                          <div className="flex flex-col">
+                            <span className="font-medium">Export PDF</span>
+                            <span className="text-[11px] text-muted-foreground">A4 landscape · multi-halaman</span>
+                          </div>
+                        </a>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="gap-3 py-3">
+                        <a href="/company-profile?export=pptx" target="_blank" rel="noreferrer">
+                          <span className="h-9 w-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <Presentation className="h-4 w-4" />
+                          </span>
+                          <div className="flex flex-col">
+                            <span className="font-medium">Export Google Slide</span>
+                            <span className="text-[11px] text-muted-foreground">Format .pptx</span>
+                          </div>
+                        </a>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
             )}
           </div>
