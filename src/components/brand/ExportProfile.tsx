@@ -280,6 +280,25 @@ const ExportProfile = () => {
     }
   };
 
+  // Auto-trigger ekspor jika dibuka dari Admin via query ?export=pdf|pptx
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const k = params.get("export");
+    if (k === "pdf" || k === "pptx") {
+      // beri jeda agar konten tersusun penuh
+      const t = setTimeout(() => {
+        handle(k as ExportKind);
+        // bersihkan URL
+        const url = new URL(window.location.href);
+        url.searchParams.delete("export");
+        window.history.replaceState({}, "", url.toString());
+      }, 1200);
+      return () => clearTimeout(t);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section className="container px-4 mx-auto pb-12 md:pb-16 flex justify-center print:hidden">
       <DropdownMenu>
