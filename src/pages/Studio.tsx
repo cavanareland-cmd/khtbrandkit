@@ -147,6 +147,18 @@ const Studio = () => {
     setCta(input.cta || "");
     setAdditionalInfo(input.additional_info || "");
     setTone(input.tone || "Tenang & Khidmat");
+    if (input.package_tier_gold_price) setPackageTierGoldPrice(input.package_tier_gold_price);
+    if (input.package_tier_gold_strike) setPackageTierGoldStrike(input.package_tier_gold_strike);
+    if (input.package_tier_silver_price) setPackageTierSilverPrice(input.package_tier_silver_price);
+    if (input.package_tier_silver_strike) setPackageTierSilverStrike(input.package_tier_silver_strike);
+    if (input.hotels) setHotels(input.hotels);
+    if (input.included) setIncluded(input.included);
+    if (input.excluded) setExcluded(input.excluded);
+    if (input.down_payment) setDownPayment(input.down_payment);
+    if (input.airline) setAirline(input.airline);
+    if (input.contact_phone) setContactPhone(input.contact_phone);
+    if (input.contact_website) setContactWebsite(input.contact_website);
+    if (input.office_address) setOfficeAddress(input.office_address);
     if (data.ai_copy && Object.keys(data.ai_copy as object).length > 0) {
       setAiCopy(data.ai_copy as unknown as AICopy);
     }
