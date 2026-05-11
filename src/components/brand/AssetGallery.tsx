@@ -102,8 +102,12 @@ const AssetGallery = () => {
                 key={item.name}
                 className="group rounded-2xl bg-card border border-border p-4 md:p-6 flex flex-col items-center text-center shadow-sm hover:shadow-elegant hover:-translate-y-1 transition-smooth"
               >
-                <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-accent-soft/50 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-smooth text-secondary">
-                  <Icon className="h-6 w-6 md:h-8 md:w-8" strokeWidth={1.5} />
+                <div className="h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-accent-soft/50 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-smooth text-secondary overflow-hidden">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt={item.name} className="w-full h-full object-contain p-1.5" />
+                  ) : (
+                    <Icon className="h-6 w-6 md:h-8 md:w-8" strokeWidth={1.5} />
+                  )}
                 </div>
                 <p className="font-display font-semibold text-xs md:text-sm text-foreground truncate w-full px-1">{item.name}</p>
                 <p className="text-[9px] md:text-[10px] font-alt uppercase tracking-widest text-muted-foreground mt-1 truncate w-full px-1">{item.desc}</p>
