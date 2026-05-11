@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/karin-logo.png";
+import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 
 // ─── CATEGORIES & FORMATS ────────────────────────────────────────────────
 const CATEGORIES = [
