@@ -62,17 +62,37 @@ const Studio = () => {
   const [generating, setGenerating] = useState(false);
   const [step, setStep] = useState<"form" | "editor">("form");
 
-  // Form state
-  const [title, setTitle] = useState("");
-  const [format, setFormat] = useState("instagram_post");
-  const [mediaType, setMediaType] = useState("flyer");
-  const [packageName, setPackageName] = useState("");
-  const [departureDate, setDepartureDate] = useState("");
-  const [price, setPrice] = useState("");
-  const [duration, setDuration] = useState("");
-  const [cta, setCta] = useState("Konsultasi Gratis Sekarang");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [tone, setTone] = useState("Tenang & Khidmat");
+  // Form state — defaults dari Brosur Paket Umroh November 2026
+  const [title, setTitle] = useState("Paket Umroh Bulan November 2026");
+  const [format, setFormat] = useState("a4_portrait");
+  const [mediaType, setMediaType] = useState("brochure");
+  const [packageName, setPackageName] = useState("Paket Umroh Reguler 13 Hari");
+  const [departureDate, setDepartureDate] = useState("19 November 2026");
+  const [price, setPrice] = useState("Mulai Rp 34.900.000 (Quad)");
+  const [duration, setDuration] = useState("13 Hari");
+  const [cta, setCta] = useState("Konsultasi & Booking: 0811-3107-707");
+  const [additionalInfo, setAdditionalInfo] = useState(
+    "Bonus: Free Kereta Cepat, Free Kereta Gantung Thaif, Free City Tour Madinah/Mekkah/Thaif, Free Nasi Mandhi.\nDP Rp 5.000.000.\nMaskapai: Lion Air (SUB - JED / JED - SUB).\nOffice: Karah Indah, Blok G1 Karah, Kec. Jambangan, Surabaya, Jawa Timur.\nWebsite: www.karinhidayahtour.com",
+  );
+  const [tone, setTone] = useState("Berkelas & Premium");
+
+  // Field tambahan khusus brosur paket Umroh
+  const [packageTierGoldPrice, setPackageTierGoldPrice] = useState("Rp 39.900.000");
+  const [packageTierGoldStrike, setPackageTierGoldStrike] = useState("Rp 41.900.000");
+  const [packageTierSilverPrice, setPackageTierSilverPrice] = useState("Rp 34.900.000");
+  const [packageTierSilverStrike, setPackageTierSilverStrike] = useState("Rp 36.900.000");
+  const [hotels, setHotels] = useState(
+    "Hotel Madinah: Al Saha /Setaraf\nHotel Mekkah: Olayan Ajyad /Setaraf\nHotel Madinah: Al Mukhtara Golden /Setaraf\nHotel Mekkah: Wahad Ajyad /Setaraf",
+  );
+  const [included, setIncluded] = useState(
+    "Tiket pesawat Sub-Jed PP\nVisa Umroh\nPerlengkapan Premium\nDokumentasi Foto & Video\nFree Handling Domestik & Internasional\nPremium Lounge Keberangkatan & Kedatangan\nTour Leader & Muthawif Berkompeten & Profesional\nBimbingan Manasik Umroh 2x\nMakan 3x Full Board\nAir Zamzam 5 Liter\nFree City Tour Madinah & Makkah\nFree City Tour Thaif\nFree Nasi Mandhi\nFree Kereta Cepat\nProgram Umroh 3x",
+  );
+  const [excluded, setExcluded] = useState("Paspor\nVaksin");
+  const [downPayment, setDownPayment] = useState("Rp 5.000.000");
+  const [airline, setAirline] = useState("Lion Air · SUB - JED / JED - SUB");
+  const [contactPhone, setContactPhone] = useState("0811-3107-707");
+  const [contactWebsite, setContactWebsite] = useState("www.karinhidayahtour.com");
+  const [officeAddress, setOfficeAddress] = useState("Karah Indah, Blok G1 Karah, Kec. Jambangan, Surabaya, Jawa Timur");
 
   // AI output
   const [aiCopy, setAiCopy] = useState<AICopy | null>(null);
@@ -127,6 +147,18 @@ const Studio = () => {
     setCta(input.cta || "");
     setAdditionalInfo(input.additional_info || "");
     setTone(input.tone || "Tenang & Khidmat");
+    if (input.package_tier_gold_price) setPackageTierGoldPrice(input.package_tier_gold_price);
+    if (input.package_tier_gold_strike) setPackageTierGoldStrike(input.package_tier_gold_strike);
+    if (input.package_tier_silver_price) setPackageTierSilverPrice(input.package_tier_silver_price);
+    if (input.package_tier_silver_strike) setPackageTierSilverStrike(input.package_tier_silver_strike);
+    if (input.hotels) setHotels(input.hotels);
+    if (input.included) setIncluded(input.included);
+    if (input.excluded) setExcluded(input.excluded);
+    if (input.down_payment) setDownPayment(input.down_payment);
+    if (input.airline) setAirline(input.airline);
+    if (input.contact_phone) setContactPhone(input.contact_phone);
+    if (input.contact_website) setContactWebsite(input.contact_website);
+    if (input.office_address) setOfficeAddress(input.office_address);
     if (data.ai_copy && Object.keys(data.ai_copy as object).length > 0) {
       setAiCopy(data.ai_copy as unknown as AICopy);
     }
@@ -266,6 +298,14 @@ const Studio = () => {
       const inputData = {
         title, package_name: packageName, departure_date: departureDate,
         price, duration, cta, additional_info: additionalInfo, tone,
+        package_tier_gold_price: packageTierGoldPrice,
+        package_tier_gold_strike: packageTierGoldStrike,
+        package_tier_silver_price: packageTierSilverPrice,
+        package_tier_silver_strike: packageTierSilverStrike,
+        hotels, included, excluded,
+        down_payment: downPayment, airline,
+        contact_phone: contactPhone, contact_website: contactWebsite,
+        office_address: officeAddress,
       };
 
       let id = creationId;
@@ -707,6 +747,65 @@ const Studio = () => {
                       rows={3}
                       maxLength={500}
                     />
+                  </div>
+
+                  {/* === Field khusus Brosur Paket Umroh === */}
+                  <div className="sm:col-span-2 pt-4 mt-2 border-t border-border">
+                    <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent mb-3">Detail Brosur Paket Umroh</p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Harga Paket Gold</Label>
+                    <Input value={packageTierGoldPrice} onChange={(e) => setPackageTierGoldPrice(e.target.value)} placeholder="Rp 39.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Coret Gold</Label>
+                    <Input value={packageTierGoldStrike} onChange={(e) => setPackageTierGoldStrike(e.target.value)} placeholder="Rp 41.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Paket Silver</Label>
+                    <Input value={packageTierSilverPrice} onChange={(e) => setPackageTierSilverPrice(e.target.value)} placeholder="Rp 34.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Coret Silver</Label>
+                    <Input value={packageTierSilverStrike} onChange={(e) => setPackageTierSilverStrike(e.target.value)} placeholder="Rp 36.900.000" />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Daftar Hotel (1 baris per hotel)</Label>
+                    <Textarea value={hotels} onChange={(e) => setHotels(e.target.value)} rows={4} maxLength={600} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Sudah Termasuk (1 baris per item)</Label>
+                    <Textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={8} maxLength={1500} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Tidak Termasuk (1 baris per item)</Label>
+                    <Textarea value={excluded} onChange={(e) => setExcluded(e.target.value)} rows={8} maxLength={500} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Down Payment (DP)</Label>
+                    <Input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Rp 5.000.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Maskapai</Label>
+                    <Input value={airline} onChange={(e) => setAirline(e.target.value)} placeholder="Lion Air · SUB - JED / JED - SUB" />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Telepon / WhatsApp</Label>
+                    <Input value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="0811-3107-707" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Website</Label>
+                    <Input value={contactWebsite} onChange={(e) => setContactWebsite(e.target.value)} placeholder="www.karinhidayahtour.com" />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Alamat Office</Label>
+                    <Textarea value={officeAddress} onChange={(e) => setOfficeAddress(e.target.value)} rows={2} maxLength={300} />
                   </div>
                 </div>
 
