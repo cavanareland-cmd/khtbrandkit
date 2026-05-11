@@ -286,6 +286,14 @@ const Studio = () => {
       const inputData = {
         title, package_name: packageName, departure_date: departureDate,
         price, duration, cta, additional_info: additionalInfo, tone,
+        package_tier_gold_price: packageTierGoldPrice,
+        package_tier_gold_strike: packageTierGoldStrike,
+        package_tier_silver_price: packageTierSilverPrice,
+        package_tier_silver_strike: packageTierSilverStrike,
+        hotels, included, excluded,
+        down_payment: downPayment, airline,
+        contact_phone: contactPhone, contact_website: contactWebsite,
+        office_address: officeAddress,
       };
 
       let id = creationId;
