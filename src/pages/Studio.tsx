@@ -62,17 +62,37 @@ const Studio = () => {
   const [generating, setGenerating] = useState(false);
   const [step, setStep] = useState<"form" | "editor">("form");
 
-  // Form state
-  const [title, setTitle] = useState("");
-  const [format, setFormat] = useState("instagram_post");
-  const [mediaType, setMediaType] = useState("flyer");
-  const [packageName, setPackageName] = useState("");
-  const [departureDate, setDepartureDate] = useState("");
-  const [price, setPrice] = useState("");
-  const [duration, setDuration] = useState("");
-  const [cta, setCta] = useState("Konsultasi Gratis Sekarang");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [tone, setTone] = useState("Tenang & Khidmat");
+  // Form state — defaults dari Brosur Paket Umroh November 2026
+  const [title, setTitle] = useState("Paket Umroh Bulan November 2026");
+  const [format, setFormat] = useState("a4_portrait");
+  const [mediaType, setMediaType] = useState("brochure");
+  const [packageName, setPackageName] = useState("Paket Umroh Reguler 13 Hari");
+  const [departureDate, setDepartureDate] = useState("19 November 2026");
+  const [price, setPrice] = useState("Mulai Rp 34.900.000 (Quad)");
+  const [duration, setDuration] = useState("13 Hari");
+  const [cta, setCta] = useState("Konsultasi & Booking: 0811-3107-707");
+  const [additionalInfo, setAdditionalInfo] = useState(
+    "Bonus: Free Kereta Cepat, Free Kereta Gantung Thaif, Free City Tour Madinah/Mekkah/Thaif, Free Nasi Mandhi.\nDP Rp 5.000.000.\nMaskapai: Lion Air (SUB - JED / JED - SUB).\nOffice: Karah Indah, Blok G1 Karah, Kec. Jambangan, Surabaya, Jawa Timur.\nWebsite: www.karinhidayahtour.com",
+  );
+  const [tone, setTone] = useState("Berkelas & Premium");
+
+  // Field tambahan khusus brosur paket Umroh
+  const [packageTierGoldPrice, setPackageTierGoldPrice] = useState("Rp 39.900.000");
+  const [packageTierGoldStrike, setPackageTierGoldStrike] = useState("Rp 41.900.000");
+  const [packageTierSilverPrice, setPackageTierSilverPrice] = useState("Rp 34.900.000");
+  const [packageTierSilverStrike, setPackageTierSilverStrike] = useState("Rp 36.900.000");
+  const [hotels, setHotels] = useState(
+    "Hotel Madinah: Al Saha /Setaraf\nHotel Mekkah: Olayan Ajyad /Setaraf\nHotel Madinah: Al Mukhtara Golden /Setaraf\nHotel Mekkah: Wahad Ajyad /Setaraf",
+  );
+  const [included, setIncluded] = useState(
+    "Tiket pesawat Sub-Jed PP\nVisa Umroh\nPerlengkapan Premium\nDokumentasi Foto & Video\nFree Handling Domestik & Internasional\nPremium Lounge Keberangkatan & Kedatangan\nTour Leader & Muthawif Berkompeten & Profesional\nBimbingan Manasik Umroh 2x\nMakan 3x Full Board\nAir Zamzam 5 Liter\nFree City Tour Madinah & Makkah\nFree City Tour Thaif\nFree Nasi Mandhi\nFree Kereta Cepat\nProgram Umroh 3x",
+  );
+  const [excluded, setExcluded] = useState("Paspor\nVaksin");
+  const [downPayment, setDownPayment] = useState("Rp 5.000.000");
+  const [airline, setAirline] = useState("Lion Air · SUB - JED / JED - SUB");
+  const [contactPhone, setContactPhone] = useState("0811-3107-707");
+  const [contactWebsite, setContactWebsite] = useState("www.karinhidayahtour.com");
+  const [officeAddress, setOfficeAddress] = useState("Karah Indah, Blok G1 Karah, Kec. Jambangan, Surabaya, Jawa Timur");
 
   // AI output
   const [aiCopy, setAiCopy] = useState<AICopy | null>(null);
