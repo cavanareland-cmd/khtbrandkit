@@ -748,6 +748,65 @@ const Studio = () => {
                       maxLength={500}
                     />
                   </div>
+
+                  {/* === Field khusus Brosur Paket Umroh === */}
+                  <div className="sm:col-span-2 pt-4 mt-2 border-t border-border">
+                    <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent mb-3">Detail Brosur Paket Umroh</p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Harga Paket Gold</Label>
+                    <Input value={packageTierGoldPrice} onChange={(e) => setPackageTierGoldPrice(e.target.value)} placeholder="Rp 39.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Coret Gold</Label>
+                    <Input value={packageTierGoldStrike} onChange={(e) => setPackageTierGoldStrike(e.target.value)} placeholder="Rp 41.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Paket Silver</Label>
+                    <Input value={packageTierSilverPrice} onChange={(e) => setPackageTierSilverPrice(e.target.value)} placeholder="Rp 34.900.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Harga Coret Silver</Label>
+                    <Input value={packageTierSilverStrike} onChange={(e) => setPackageTierSilverStrike(e.target.value)} placeholder="Rp 36.900.000" />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Daftar Hotel (1 baris per hotel)</Label>
+                    <Textarea value={hotels} onChange={(e) => setHotels(e.target.value)} rows={4} maxLength={600} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Sudah Termasuk (1 baris per item)</Label>
+                    <Textarea value={included} onChange={(e) => setIncluded(e.target.value)} rows={8} maxLength={1500} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Tidak Termasuk (1 baris per item)</Label>
+                    <Textarea value={excluded} onChange={(e) => setExcluded(e.target.value)} rows={8} maxLength={500} />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Down Payment (DP)</Label>
+                    <Input value={downPayment} onChange={(e) => setDownPayment(e.target.value)} placeholder="Rp 5.000.000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Maskapai</Label>
+                    <Input value={airline} onChange={(e) => setAirline(e.target.value)} placeholder="Lion Air · SUB - JED / JED - SUB" />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Telepon / WhatsApp</Label>
+                    <Input value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="0811-3107-707" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Website</Label>
+                    <Input value={contactWebsite} onChange={(e) => setContactWebsite(e.target.value)} placeholder="www.karinhidayahtour.com" />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label>Alamat Office</Label>
+                    <Textarea value={officeAddress} onChange={(e) => setOfficeAddress(e.target.value)} rows={2} maxLength={300} />
+                  </div>
                 </div>
 
                 <Button
