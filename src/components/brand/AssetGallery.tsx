@@ -26,7 +26,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 type LogoVariant = { title: string; subtitle: string; bg: string; border: string; inverse: boolean; image_url: string | null };
-type IconItem = { icon: string; name: string; desc: string };
+type IconItem = { icon: string; name: string; desc: string; image_url?: string };
 
 const AssetGallery = () => {
   const logos = useBrandKit("asset_logo");
