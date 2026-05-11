@@ -90,6 +90,7 @@ const Assets = () => {
   const [selectedTpl, setSelectedTpl] = useState<TemplateRow | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [iconCreatorOpen, setIconCreatorOpen] = useState(false);
 
   // Form state
   const [title, setTitle] = useState("");
