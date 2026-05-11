@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/karin-logo.png";
+import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 
 // ─── CATEGORIES & FORMATS ────────────────────────────────────────────────
 const CATEGORIES = [
@@ -89,6 +90,7 @@ const Assets = () => {
   const [selectedTpl, setSelectedTpl] = useState<TemplateRow | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [iconCreatorOpen, setIconCreatorOpen] = useState(false);
 
   // Form state
   const [title, setTitle] = useState("");
@@ -296,6 +298,9 @@ const Assets = () => {
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setIconCreatorOpen(true)} className="gap-1.5">
+              <Wand2 className="h-3.5 w-3.5" /> Icon Creator
+            </Button>
             <Link to="/studio">
               <Button variant="ghost" size="sm" className="gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Studio</Button>
             </Link>
@@ -305,6 +310,7 @@ const Assets = () => {
           </div>
         </div>
       </header>
+      <IconCreatorDialog open={iconCreatorOpen} onOpenChange={setIconCreatorOpen} />
 
       {/* Stepper */}
       <div className="container py-6">
