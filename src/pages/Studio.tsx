@@ -15,6 +15,7 @@ import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import MediaLibrary from "@/components/studio/MediaLibrary";
 import ProAdCreator from "@/components/studio/ProAdCreator";
+import { useStudioDefaults } from "@/hooks/useStudioDefaults";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -124,6 +125,35 @@ const Studio = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Load Studio form defaults from Brand Kit (CMS-managed)
+  const { defaults: studioDefaults } = useStudioDefaults();
+  useEffect(() => {
+    if (!studioDefaults || editId) return; // don't override when editing existing creation
+    const d = studioDefaults;
+    if (d.title) setTitle(d.title);
+    if (d.format) setFormat(d.format);
+    if (d.media_type) setMediaType(d.media_type);
+    if (d.package_name) setPackageName(d.package_name);
+    if (d.departure_date) setDepartureDate(d.departure_date);
+    if (d.price) setPrice(d.price);
+    if (d.duration) setDuration(d.duration);
+    if (d.cta) setCta(d.cta);
+    if (d.additional_info) setAdditionalInfo(d.additional_info);
+    if (d.tone) setTone(d.tone);
+    if (d.package_tier_gold_price) setPackageTierGoldPrice(d.package_tier_gold_price);
+    if (d.package_tier_gold_strike) setPackageTierGoldStrike(d.package_tier_gold_strike);
+    if (d.package_tier_silver_price) setPackageTierSilverPrice(d.package_tier_silver_price);
+    if (d.package_tier_silver_strike) setPackageTierSilverStrike(d.package_tier_silver_strike);
+    if (d.hotels) setHotels(d.hotels);
+    if (d.included) setIncluded(d.included);
+    if (d.excluded) setExcluded(d.excluded);
+    if (d.down_payment) setDownPayment(d.down_payment);
+    if (d.airline) setAirline(d.airline);
+    if (d.contact_phone) setContactPhone(d.contact_phone);
+    if (d.contact_website) setContactWebsite(d.contact_website);
+    if (d.office_address) setOfficeAddress(d.office_address);
+  }, [studioDefaults, editId]);
 
   useEffect(() => {
     if (editId && user) {
