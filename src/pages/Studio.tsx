@@ -224,6 +224,7 @@ const Studio = () => {
         const { data, error } = await supabase.from("creations").insert({
           user_id: user.id, title, format, media_type: mediaType,
           input_data: inputData, status: "generating", template_id: selectedTemplate.id,
+          ai_brief: (extractedBrief ?? {}) as unknown as never,
         }).select().single();
         if (error || !data) throw error || new Error("Insert failed");
         id = data.id;
