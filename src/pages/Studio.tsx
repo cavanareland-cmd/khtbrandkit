@@ -194,6 +194,9 @@ const Studio = () => {
     if (data.ai_copy && Object.keys(data.ai_copy as object).length > 0) {
       setAiCopy(data.ai_copy as unknown as AICopy);
     }
+    if (data.ai_brief && Object.keys(data.ai_brief as object).length > 0) {
+      setExtractedBrief(data.ai_brief as unknown as Record<string, string>);
+    }
     if (data.background_image_url) setBgUrl(data.background_image_url);
     if (data.text_layers && Array.isArray(data.text_layers) && data.text_layers.length > 0) {
       setLayers(data.text_layers as unknown as TextLayer[]);
