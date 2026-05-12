@@ -253,6 +253,8 @@ const Studio = () => {
       setExtractingBrief(false);
     }
   };
+
+  const handleSaveRichLayers = async () => {
     if (!creationId) return;
     await supabase.from("creations").update({
       elements: richLayers as unknown as never,
