@@ -627,7 +627,39 @@ const Studio = () => {
                 <h2 className="font-display text-3xl font-bold text-secondary">Upload referensi & biarkan AI yang remix</h2>
                 <p className="text-muted-foreground text-sm mt-2">Upload PNG/JPG/PDF. AI akan analisis layout, warna, dan komposisi untuk dipakai sebagai inspirasi atau di-extract jadi layer yang bisa diedit.</p>
               </div>
-              <TemplatePicker selectedId={selectedTemplate?.id ?? null} onSelect={(t) => setSelectedTemplate(t as never)} />
+              <TemplatePicker selectedId={selectedTemplate?.id ?? null} onSelect={(t) => { setSelectedTemplate(t as never); setExtractedBrief(null); }} />
+
+              {selectedTemplate && (
+                <div className="bg-gradient-to-br from-accent/10 to-primary/5 border border-accent/30 rounded-2xl p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="font-alt text-[10px] uppercase tracking-[0.3em] text-accent">AI Brief Extractor</p>
+                      <h3 className="font-display text-lg font-bold text-secondary mt-1">Extract konten template jadi brief</h3>
+                      <p className="text-xs text-muted-foreground mt-1">AI akan baca semua teks (OCR) & visual lalu mengisi otomatis form di bawah sebagai bahan kreasi baru.</p>
+                    </div>
+                    <Button onClick={handleExtractBrief} disabled={extractingBrief} size="sm" className="shrink-0 gap-2">
+                      {extractingBrief ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                      {extractingBrief ? "Mengekstrak..." : "Extract Brief"}
+                    </Button>
+                  </div>
+                  {extractedBrief && (
+                    <div className="space-y-2 pt-2 border-t border-accent/20">
+                      {extractedBrief.summary && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Ringkasan Brief</p>
+                          <p className="text-xs text-foreground leading-relaxed">{extractedBrief.summary}</p>
+                        </div>
+                      )}
+                      {extractedBrief.detected_text && (
+                        <details className="text-xs">
+                          <summary className="cursor-pointer text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground">Teks Terdeteksi (OCR)</summary>
+                          <pre className="mt-2 p-2 bg-background/60 rounded text-[11px] whitespace-pre-wrap font-mono max-h-40 overflow-auto">{extractedBrief.detected_text}</pre>
+                        </details>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5 sm:col-span-2">
