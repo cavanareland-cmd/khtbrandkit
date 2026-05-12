@@ -109,7 +109,7 @@ const Studio = () => {
   const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
   const [templateGenerating, setTemplateGenerating] = useState(false);
   const [extractingBrief, setExtractingBrief] = useState(false);
-  const [extractedBrief, setExtractedBrief] = useState<{ summary?: string; detected_text?: string } | null>(null);
+  const [extractedBrief, setExtractedBrief] = useState<Record<string, string> | null>(null);
   const [richLayers, setRichLayers] = useState<Layer[]>([]);
   const [globalStyle, setGlobalStyle] = useState<GlobalStyle>(DEFAULT_GLOBAL_STYLE);
 
@@ -275,7 +275,11 @@ const Studio = () => {
       if (b.additional_info) setAdditionalInfo(b.additional_info);
       if (b.tone) setTone(b.tone);
       if (b.media_type) setMediaType(b.media_type);
-      setExtractedBrief({ summary: b.summary, detected_text: b.detected_text });
+      setExtractedBrief(b);
+      // Persist brief on the current creation if there is one (else saved on next generate)
+      if (creationId) {
+        await supabase.from("creations").update({ ai_brief: b as unknown as never, template_id: selectedTemplate.id }).eq("id", creationId);
+      }
       toast.success("Brief diekstrak dari template ✨");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
