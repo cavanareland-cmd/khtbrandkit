@@ -1,14 +1,12 @@
 // Edge Function: extract-template-brief
-// Reads an uploaded template image and extracts a structured CONTENT BRIEF
-// (headline, subheadline, package, date, price, cta, body, tone, media type)
-// to pre-fill the Studio form so users can quickly create a new variation.
+// Reads an uploaded template image, injects KHT Brand Kit context, and extracts
+// a structured CONTENT BRIEF that pre-fills the Studio form. The brief is also
+// saved into templates.analysis.extracted_brief for re-use in Admin/CMS.
 
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 
 interface Req { templateId: string }
-
-const SYSTEM = `You are a senior creative director. Look at the uploaded marketing design (poster/flyer/brochure/social) and extract a CONTENT BRIEF in Bahasa Indonesia that another designer can use to recreate a NEW variation. Read all visible text via OCR (verbatim where useful), then summarize. Be concrete, no fluff.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -33,6 +31,43 @@ Deno.serve(async (req) => {
     const imageUrl = tpl.preview_url || tpl.file_url;
     if (!imageUrl) throw new Error("Template tidak punya preview image");
 
+    // ── Brand Kit injection ────────────────────────────────────────────────
+    const { data: bkRows } = await supabase
+      .from("brand_kit")
+      .select("section,key,data")
+      .in("section", ["identity", "color", "voice_do", "voice_dont", "voice_personality"]);
+
+    const identity: Record<string, string> = {};
+    const colors: string[] = [];
+    const voiceDo: string[] = [];
+    const voiceDont: string[] = [];
+    const personality: string[] = [];
+    (bkRows || []).forEach((r) => {
+      const d = r.data as Record<string, unknown>;
+      if (r.section === "identity" && r.key) identity[r.key as string] = String(d.value ?? "");
+      if (r.section === "color") colors.push(`${d.name} (${d.hex}, ${d.role})`);
+      if (r.section === "voice_do") voiceDo.push(String(d.text ?? ""));
+      if (r.section === "voice_dont") voiceDont.push(String(d.text ?? ""));
+      if (r.section === "voice_personality") personality.push(`${d.title}: ${d.desc}`);
+    });
+
+    const brandContext = `BRAND: ${identity.brand_name_primary || "Karin Hidayah Tour"} (${identity.brand_name_secondary || "KHT"}) — ${identity.category_label || "Travel Umrah & Haji"}.
+TAGLINE: ${identity.tagline || ""}
+WARNA: ${colors.slice(0, 7).join("; ")}
+KEPRIBADIAN: ${personality.join(" | ")}
+BAHASA YANG DIPAKAI (DO): ${voiceDo.join(" / ")}
+HINDARI (DON'T): ${voiceDont.join(" / ")}`;
+
+    const SYSTEM = `You are a senior creative director for ${identity.brand_name_primary || "Karin Hidayah Tour"}. You will look at an uploaded marketing design and extract a CONTENT BRIEF in Bahasa Indonesia that another designer can use to recreate a NEW variation in our brand voice.
+
+${brandContext}
+
+RULES:
+- OCR semua teks yang terlihat (verbatim) sebelum menyusun brief.
+- Brief harus selaras dengan kepribadian brand di atas; gunakan bahasa "DO" dan jauhi gaya "DON'T".
+- Bila info tidak terlihat di gambar, isi dengan saran wajar yang tetap konsisten dengan brand.
+- Concrete, no fluff.`;
+
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
@@ -41,7 +76,7 @@ Deno.serve(async (req) => {
         messages: [
           { role: "system", content: SYSTEM },
           { role: "user", content: [
-            { type: "text", text: "Lakukan OCR pada gambar lalu hasilkan brief konten terstruktur untuk membuat variasi BARU dari desain ini. Isi semua field. Bila info tidak terlihat, buat saran wajar berdasarkan konteks visual." },
+            { type: "text", text: "Lakukan OCR pada gambar lalu hasilkan brief konten terstruktur dalam brand voice di system prompt." },
             { type: "image_url", image_url: { url: imageUrl } },
           ] },
         ],
@@ -53,17 +88,17 @@ Deno.serve(async (req) => {
             parameters: {
               type: "object",
               properties: {
-                title: { type: "string", description: "Judul / headline utama" },
-                package_name: { type: "string", description: "Sub-headline atau nama paket" },
-                departure_date: { type: "string", description: "Tanggal / detail jadwal jika ada" },
-                price: { type: "string", description: "Harga / range harga" },
-                duration: { type: "string", description: "Durasi (cth: 13 Hari)" },
-                cta: { type: "string", description: "Call-to-action lengkap (cth: Hubungi 0811-...)" },
-                additional_info: { type: "string", description: "Bullet/paragraf info tambahan: bonus, hotel, fasilitas, alamat, website. Pisah dengan newline." },
-                tone: { type: "string", description: "Saran tone, salah satu: 'Tenang & Khidmat', 'Hangat & Kekeluargaan', 'Berkelas & Premium', 'Inspiratif & Memotivasi', 'Informatif & Jelas'" },
+                title: { type: "string" },
+                package_name: { type: "string" },
+                departure_date: { type: "string" },
+                price: { type: "string" },
+                duration: { type: "string" },
+                cta: { type: "string" },
+                additional_info: { type: "string", description: "Bonus, fasilitas, hotel, alamat, website. Pisah newline." },
+                tone: { type: "string", description: "Salah satu: 'Tenang & Khidmat', 'Hangat & Kekeluargaan', 'Berkelas & Premium', 'Inspiratif & Memotivasi', 'Informatif & Jelas'" },
                 media_type: { type: "string", enum: ["flyer", "poster", "brochure", "social_post", "story", "announcement"] },
                 summary: { type: "string", description: "Ringkasan brief 1-2 kalimat untuk designer" },
-                detected_text: { type: "string", description: "Semua teks mentah hasil OCR (verbatim, dipisah newline)" },
+                detected_text: { type: "string", description: "Semua teks OCR mentah, dipisah newline" },
               },
               required: ["title", "package_name", "departure_date", "price", "duration", "cta", "additional_info", "tone", "media_type", "summary", "detected_text"],
               additionalProperties: false,
@@ -86,6 +121,11 @@ Deno.serve(async (req) => {
     const tool = data.choices?.[0]?.message?.tool_calls?.[0];
     if (!tool) throw new Error("No tool call");
     const brief = JSON.parse(tool.function.arguments);
+
+    // Persist brief into templates.analysis.extracted_brief (merge)
+    const prevAnalysis = (tpl.analysis as Record<string, unknown> | null) || {};
+    const mergedAnalysis = { ...prevAnalysis, extracted_brief: { ...brief, extracted_at: new Date().toISOString() } };
+    await supabase.from("templates").update({ analysis: mergedAnalysis }).eq("id", templateId);
 
     return new Response(JSON.stringify({ success: true, brief }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {

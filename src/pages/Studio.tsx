@@ -15,6 +15,7 @@ import LayeredCanvasEditor, { type Layer, type GlobalStyle, DEFAULT_GLOBAL_STYLE
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import MediaLibrary from "@/components/studio/MediaLibrary";
 import ProAdCreator from "@/components/studio/ProAdCreator";
+import { useStudioDefaults } from "@/hooks/useStudioDefaults";
 
 const MEDIA_TYPES = [
   { value: "flyer", label: "Flyer Promosi" },
@@ -108,7 +109,7 @@ const Studio = () => {
   const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
   const [templateGenerating, setTemplateGenerating] = useState(false);
   const [extractingBrief, setExtractingBrief] = useState(false);
-  const [extractedBrief, setExtractedBrief] = useState<{ summary?: string; detected_text?: string } | null>(null);
+  const [extractedBrief, setExtractedBrief] = useState<Record<string, string> | null>(null);
   const [richLayers, setRichLayers] = useState<Layer[]>([]);
   const [globalStyle, setGlobalStyle] = useState<GlobalStyle>(DEFAULT_GLOBAL_STYLE);
 
@@ -124,6 +125,35 @@ const Studio = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Load Studio form defaults from Brand Kit (CMS-managed)
+  const { defaults: studioDefaults } = useStudioDefaults();
+  useEffect(() => {
+    if (!studioDefaults || editId) return; // don't override when editing existing creation
+    const d = studioDefaults;
+    if (d.title) setTitle(d.title);
+    if (d.format) setFormat(d.format);
+    if (d.media_type) setMediaType(d.media_type);
+    if (d.package_name) setPackageName(d.package_name);
+    if (d.departure_date) setDepartureDate(d.departure_date);
+    if (d.price) setPrice(d.price);
+    if (d.duration) setDuration(d.duration);
+    if (d.cta) setCta(d.cta);
+    if (d.additional_info) setAdditionalInfo(d.additional_info);
+    if (d.tone) setTone(d.tone);
+    if (d.package_tier_gold_price) setPackageTierGoldPrice(d.package_tier_gold_price);
+    if (d.package_tier_gold_strike) setPackageTierGoldStrike(d.package_tier_gold_strike);
+    if (d.package_tier_silver_price) setPackageTierSilverPrice(d.package_tier_silver_price);
+    if (d.package_tier_silver_strike) setPackageTierSilverStrike(d.package_tier_silver_strike);
+    if (d.hotels) setHotels(d.hotels);
+    if (d.included) setIncluded(d.included);
+    if (d.excluded) setExcluded(d.excluded);
+    if (d.down_payment) setDownPayment(d.down_payment);
+    if (d.airline) setAirline(d.airline);
+    if (d.contact_phone) setContactPhone(d.contact_phone);
+    if (d.contact_website) setContactWebsite(d.contact_website);
+    if (d.office_address) setOfficeAddress(d.office_address);
+  }, [studioDefaults, editId]);
 
   useEffect(() => {
     if (editId && user) {
@@ -164,6 +194,9 @@ const Studio = () => {
     if (data.ai_copy && Object.keys(data.ai_copy as object).length > 0) {
       setAiCopy(data.ai_copy as unknown as AICopy);
     }
+    if (data.ai_brief && Object.keys(data.ai_brief as object).length > 0) {
+      setExtractedBrief(data.ai_brief as unknown as Record<string, string>);
+    }
     if (data.background_image_url) setBgUrl(data.background_image_url);
     if (data.text_layers && Array.isArray(data.text_layers) && data.text_layers.length > 0) {
       setLayers(data.text_layers as unknown as TextLayer[]);
@@ -194,6 +227,7 @@ const Studio = () => {
         const { data, error } = await supabase.from("creations").insert({
           user_id: user.id, title, format, media_type: mediaType,
           input_data: inputData, status: "generating", template_id: selectedTemplate.id,
+          ai_brief: (extractedBrief ?? {}) as unknown as never,
         }).select().single();
         if (error || !data) throw error || new Error("Insert failed");
         id = data.id;
@@ -245,7 +279,11 @@ const Studio = () => {
       if (b.additional_info) setAdditionalInfo(b.additional_info);
       if (b.tone) setTone(b.tone);
       if (b.media_type) setMediaType(b.media_type);
-      setExtractedBrief({ summary: b.summary, detected_text: b.detected_text });
+      setExtractedBrief(b);
+      // Persist brief on the current creation if there is one (else saved on next generate)
+      if (creationId) {
+        await supabase.from("creations").update({ ai_brief: b as unknown as never, template_id: selectedTemplate.id }).eq("id", creationId);
+      }
       toast.success("Brief diekstrak dari template ✨");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
@@ -348,6 +386,7 @@ const Studio = () => {
           title, format, media_type: mediaType,
           input_data: inputData,
           status: "generating",
+          ai_brief: (extractedBrief ?? {}) as unknown as never,
         }).select().single();
         if (error || !data) throw error || new Error("Insert failed");
         id = data.id;
@@ -355,6 +394,7 @@ const Studio = () => {
       } else {
         await supabase.from("creations").update({
           title, format, media_type: mediaType, input_data: inputData, status: "generating",
+          ...(extractedBrief ? { ai_brief: extractedBrief as unknown as never } : {}),
         }).eq("id", id);
       }
 
