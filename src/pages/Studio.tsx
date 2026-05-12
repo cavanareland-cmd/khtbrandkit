@@ -107,6 +107,8 @@ const Studio = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<{ id: string; name: string; analysis: Record<string, unknown> | null; status: string } | null>(null);
   const [templateMode, setTemplateMode] = useState<"inspiration" | "extract">("inspiration");
   const [templateGenerating, setTemplateGenerating] = useState(false);
+  const [extractingBrief, setExtractingBrief] = useState(false);
+  const [extractedBrief, setExtractedBrief] = useState<{ summary?: string; detected_text?: string } | null>(null);
   const [richLayers, setRichLayers] = useState<Layer[]>([]);
   const [globalStyle, setGlobalStyle] = useState<GlobalStyle>(DEFAULT_GLOBAL_STYLE);
 
@@ -221,7 +223,36 @@ const Studio = () => {
     }
   };
 
-  const handleSaveRichLayers = async () => {
+  const handleExtractBrief = async () => {
+    if (!selectedTemplate) { toast.error("Pilih template dulu"); return; }
+    setExtractingBrief(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/extract-template-brief`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ templateId: selectedTemplate.id }),
+      });
+      const result = await res.json();
+      if (!res.ok) { toast.error(result.error || "Extract gagal"); return; }
+      const b = result.brief as Record<string, string>;
+      if (b.title) setTitle(b.title);
+      if (b.package_name) setPackageName(b.package_name);
+      if (b.departure_date) setDepartureDate(b.departure_date);
+      if (b.price) setPrice(b.price);
+      if (b.duration) setDuration(b.duration);
+      if (b.cta) setCta(b.cta);
+      if (b.additional_info) setAdditionalInfo(b.additional_info);
+      if (b.tone) setTone(b.tone);
+      if (b.media_type) setMediaType(b.media_type);
+      setExtractedBrief({ summary: b.summary, detected_text: b.detected_text });
+      toast.success("Brief diekstrak dari template ✨");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error");
+    } finally {
+      setExtractingBrief(false);
+    }
+  };
     if (!creationId) return;
     await supabase.from("creations").update({
       elements: richLayers as unknown as never,
