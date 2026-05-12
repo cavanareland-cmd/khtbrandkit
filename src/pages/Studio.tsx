@@ -383,6 +383,7 @@ const Studio = () => {
           title, format, media_type: mediaType,
           input_data: inputData,
           status: "generating",
+          ai_brief: (extractedBrief ?? {}) as unknown as never,
         }).select().single();
         if (error || !data) throw error || new Error("Insert failed");
         id = data.id;
@@ -390,6 +391,7 @@ const Studio = () => {
       } else {
         await supabase.from("creations").update({
           title, format, media_type: mediaType, input_data: inputData, status: "generating",
+          ...(extractedBrief ? { ai_brief: extractedBrief as unknown as never } : {}),
         }).eq("id", id);
       }
 
