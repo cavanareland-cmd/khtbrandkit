@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/karin-logo.png";
 import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
+import GraphicCreatorDialog from "@/components/brand/GraphicCreatorDialog";
 
 // ─── CATEGORIES & FORMATS ────────────────────────────────────────────────
 const CATEGORIES = [
