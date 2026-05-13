@@ -20,52 +20,9 @@ import { cn } from "@/lib/utils";
 import logo from "@/assets/karin-logo.png";
 import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 import GraphicCreatorDialog from "@/components/brand/GraphicCreatorDialog";
+import { useAssetCategories, type AssetCategory } from "@/hooks/useAssetCategories";
 
-// ─── CATEGORIES & FORMATS ────────────────────────────────────────────────
-const CATEGORIES = [
-  {
-    key: "umrah_poster",
-    title: "Poster / Brosur Paket Umrah",
-    desc: "Promosi paket umrah lengkap dengan harga & fasilitas",
-    icon: Plane,
-    format: "1080x1350",
-    accent: "from-primary/20 to-secondary/20",
-  },
-  {
-    key: "hajj_poster",
-    title: "Poster Paket Haji",
-    desc: "Aset promosi paket haji premium & reguler",
-    icon: Compass,
-    format: "1080x1350",
-    accent: "from-secondary/20 to-accent/20",
-  },
-  {
-    key: "story_promo",
-    title: "Story Promo (IG / WA)",
-    desc: "Format vertikal 9:16 untuk story & status",
-    icon: Smartphone,
-    format: "1080x1920",
-    accent: "from-accent/20 to-primary/20",
-  },
-  {
-    key: "feed_square",
-    title: "Feed Square",
-    desc: "Format kotak 1:1 untuk Instagram Feed",
-    icon: SquareIcon,
-    format: "1080x1080",
-    accent: "from-primary/20 to-accent/20",
-  },
-  {
-    key: "social_universal",
-    title: "Sosial Media Universal",
-    desc: "Format multi-platform (FB, TikTok, X, dll)",
-    icon: MonitorPlay,
-    format: "1080x1350",
-    accent: "from-secondary/20 to-primary/20",
-  },
-] as const;
-
-type CategoryKey = typeof CATEGORIES[number]["key"];
+type CategoryKey = string;
 
 interface TemplateRow {
   id: string;
