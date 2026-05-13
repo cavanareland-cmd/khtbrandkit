@@ -27,14 +27,17 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 type LogoVariant = { title: string; subtitle: string; bg: string; border: string; inverse: boolean; image_url: string | null };
 type IconItem = { icon: string; name: string; desc: string; image_url?: string };
+type GraphicItem = { name: string; desc: string; kind: string; style: string; image_url: string };
 
 const AssetGallery = () => {
   const logos = useBrandKit("asset_logo");
   const icons = useBrandKit("asset_icon");
+  const graphics = useBrandKit("asset_graphic");
   const [editorOpen, setEditorOpen] = useState(false);
 
   const logoVariants: LogoVariant[] = logos.entries.map((e) => e.data as unknown as LogoVariant);
   const iconList: IconItem[] = icons.entries.map((e) => e.data as unknown as IconItem);
+  const graphicList: GraphicItem[] = graphics.entries.map((e) => e.data as unknown as GraphicItem);
 
   return (
     <section id="assets" className="py-12 md:py-24 bg-background relative">
