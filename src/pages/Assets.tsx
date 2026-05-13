@@ -92,6 +92,7 @@ const Assets = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [iconCreatorOpen, setIconCreatorOpen] = useState(false);
+  const [graphicCreatorOpen, setGraphicCreatorOpen] = useState(false);
 
   // Form state
   const [title, setTitle] = useState("");
