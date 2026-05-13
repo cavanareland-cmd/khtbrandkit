@@ -27,14 +27,17 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 type LogoVariant = { title: string; subtitle: string; bg: string; border: string; inverse: boolean; image_url: string | null };
 type IconItem = { icon: string; name: string; desc: string; image_url?: string };
+type GraphicItem = { name: string; desc: string; kind: string; style: string; image_url: string };
 
 const AssetGallery = () => {
   const logos = useBrandKit("asset_logo");
   const icons = useBrandKit("asset_icon");
+  const graphics = useBrandKit("asset_graphic");
   const [editorOpen, setEditorOpen] = useState(false);
 
   const logoVariants: LogoVariant[] = logos.entries.map((e) => e.data as unknown as LogoVariant);
   const iconList: IconItem[] = icons.entries.map((e) => e.data as unknown as IconItem);
+  const graphicList: GraphicItem[] = graphics.entries.map((e) => e.data as unknown as GraphicItem);
 
   return (
     <section id="assets" className="py-12 md:py-24 bg-background relative">
@@ -121,6 +124,49 @@ const AssetGallery = () => {
             );
           })}
         </div>
+
+        {/* Graphics / Vector Accents */}
+        {graphicList.length > 0 && (
+          <>
+            <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-8 mt-20 gap-3">
+              <h3 className="font-display text-2xl font-semibold text-foreground">Elemen Visual & Aksen Vector</h3>
+              <p className="font-alt text-[10px] md:text-xs uppercase tracking-widest text-muted-foreground">AI Generated · Sesuai Brand Kit</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {graphicList.map((g, i) => (
+                <div
+                  key={`${g.name}-${i}`}
+                  className="group rounded-2xl bg-card border border-border p-3 flex flex-col items-center text-center shadow-sm hover:shadow-elegant hover:-translate-y-1 transition-smooth"
+                >
+                  <div
+                    className="w-full aspect-square rounded-xl flex items-center justify-center overflow-hidden mb-3"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(45deg, hsl(var(--muted)) 25%, transparent 25%), linear-gradient(-45deg, hsl(var(--muted)) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, hsl(var(--muted)) 75%), linear-gradient(-45deg, transparent 75%, hsl(var(--muted)) 75%)",
+                      backgroundSize: "12px 12px",
+                      backgroundPosition: "0 0, 0 6px, 6px -6px, -6px 0px",
+                    }}
+                  >
+                    <img src={g.image_url} alt={g.name} className="w-full h-full object-contain p-2" />
+                  </div>
+                  <p className="font-display font-semibold text-xs text-foreground truncate w-full px-1">{g.name}</p>
+                  <p className="text-[9px] font-alt uppercase tracking-widest text-muted-foreground mt-1 truncate w-full px-1">
+                    {g.kind} · {g.style}
+                  </p>
+                  <a
+                    href={g.image_url}
+                    download
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 text-[10px] font-alt uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-smooth flex items-center gap-1"
+                  >
+                    <Download className="h-3 w-3" /> PNG
+                  </a>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <AssetEditor open={editorOpen} onOpenChange={setEditorOpen} />
