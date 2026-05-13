@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2, Eye, EyeOff, RefreshCw, Monitor, Tablet, Smartphone, Download, Presentation, ClipboardList } from "lucide-react";
+import { Sparkles, FileText, LayoutTemplate, ImageIcon, FolderHeart, LogOut, ExternalLink, Loader2, Eye, EyeOff, RefreshCw, Monitor, Tablet, Smartphone, Download, Presentation, ClipboardList, Layers } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,8 +18,9 @@ import TemplatesAdmin from "@/components/admin/TemplatesAdmin";
 import MediaAdmin from "@/components/admin/MediaAdmin";
 import CreationsAdmin from "@/components/admin/CreationsAdmin";
 import BriefsAdmin from "@/components/admin/BriefsAdmin";
+import AssetCategoriesAdmin from "@/components/admin/AssetCategoriesAdmin";
 
-type Tab = "company-profile" | "index" | "templates" | "media" | "creations" | "briefs";
+type Tab = "company-profile" | "index" | "templates" | "media" | "creations" | "briefs" | "asset-categories";
 type Device = "desktop" | "tablet" | "mobile";
 const DEVICE_W: Record<Device, string> = { desktop: "100%", tablet: "768px", mobile: "390px" };
 
@@ -61,6 +62,7 @@ const Admin = () => {
     { key: "media", label: "Media Library", icon: ImageIcon, group: "Library" },
     { key: "creations", label: "Karya Studio", icon: FolderHeart, group: "Library" },
     { key: "briefs", label: "AI Briefs", icon: ClipboardList, group: "Library" },
+    { key: "asset-categories", label: "Kategori Aset", icon: Layers, group: "Library" },
   ];
 
   const groups = Array.from(new Set(navItems.map((n) => n.group)));
@@ -234,6 +236,7 @@ const Admin = () => {
             {tab === "media" && <MediaAdmin />}
             {tab === "creations" && <CreationsAdmin />}
             {tab === "briefs" && <BriefsAdmin />}
+            {tab === "asset-categories" && <AssetCategoriesAdmin />}
           </div>
         )}
       </main>

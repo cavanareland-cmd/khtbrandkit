@@ -1,0 +1,6 @@
+INSERT INTO public.brand_kit (section, key, data, sort_order) VALUES
+('asset_category','umrah_poster','{"key":"umrah_poster","title":"Poster / Brosur Paket Umrah","desc":"Promosi paket umrah lengkap dengan harga & fasilitas","icon":"Plane","format":"1080x1350","accent":"from-primary/20 to-secondary/20"}'::jsonb,1),
+('asset_category','hajj_poster','{"key":"hajj_poster","title":"Poster Paket Haji","desc":"Aset promosi paket haji premium & reguler","icon":"Compass","format":"1080x1350","accent":"from-secondary/20 to-accent/20"}'::jsonb,2),
+('asset_category','story_promo','{"key":"story_promo","title":"Story Promo (IG / WA)","desc":"Format vertikal 9:16 untuk story & status","icon":"Smartphone","format":"1080x1920","accent":"from-accent/20 to-primary/20"}'::jsonb,3),
+('asset_category','feed_square','{"key":"feed_square","title":"Feed Square","desc":"Format kotak 1:1 untuk Instagram Feed","icon":"Square","format":"1080x1080","accent":"from-primary/20 to-accent/20"}'::jsonb,4),
+('asset_category','social_universal','{"key":"social_universal","title":"Sosial Media Universal","desc":"Format multi-platform (FB, TikTok, X, dll)","icon":"MonitorPlay","format":"1080x1350","accent":"from-secondary/20 to-primary/20"}'::jsonb,5);
