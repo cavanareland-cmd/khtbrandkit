@@ -42,7 +42,8 @@ const Assets = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuthSession();
   const [step, setStep] = useState<Step>("category");
-  const [selectedCategory, setSelectedCategory] = useState<typeof CATEGORIES[number] | null>(null);
+  const { categories: CATEGORIES } = useAssetCategories();
+  const [selectedCategory, setSelectedCategory] = useState<AssetCategory | null>(null);
   const [templates, setTemplates] = useState<TemplateRow[]>([]);
   const [loadingTpl, setLoadingTpl] = useState(false);
   const [selectedTpl, setSelectedTpl] = useState<TemplateRow | null>(null);
@@ -92,7 +93,7 @@ const Assets = () => {
     return () => clearInterval(id);
   }, [templates, selectedCategory, loadTemplates]);
 
-  const handleSelectCategory = (cat: typeof CATEGORIES[number]) => {
+  const handleSelectCategory = (cat: AssetCategory) => {
     setSelectedCategory(cat);
     setStep("template");
     loadTemplates(cat.key);
