@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.extract-template-brief]
 verify_jwt = false
+
+[functions.generate-brand-graphic]
+verify_jwt = false
