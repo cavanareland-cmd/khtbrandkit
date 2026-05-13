@@ -300,6 +300,9 @@ const Assets = () => {
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setGraphicCreatorOpen(true)} className="gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" /> Graphic Creator
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setIconCreatorOpen(true)} className="gap-1.5">
               <Wand2 className="h-3.5 w-3.5" /> Icon Creator
             </Button>
@@ -313,6 +316,7 @@ const Assets = () => {
         </div>
       </header>
       <IconCreatorDialog open={iconCreatorOpen} onOpenChange={setIconCreatorOpen} />
+      <GraphicCreatorDialog open={graphicCreatorOpen} onOpenChange={setGraphicCreatorOpen} />
 
       {/* Stepper */}
       <div className="container py-6">
