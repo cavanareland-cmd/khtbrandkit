@@ -1,27 +1,27 @@
-import Header from "@/components/brand/Header";
+// import Header from "@/components/brand/Header"; // Header dinonaktifkan
 import Hero from "@/components/brand/Hero";
 import ColorPalette from "@/components/brand/ColorPalette";
 import Typography from "@/components/brand/Typography";
 import AssetGallery from "@/components/brand/AssetGallery";
 import BrandVoice from "@/components/brand/BrandVoice";
 import ProfileDownloads from "@/components/brand/ProfileDownloads";
-import Footer from "@/components/brand/Footer";
+// import Footer from "@/components/brand/Footer"; // Footer dinonaktifkan
 import MobileQuickMenu from "@/components/brand/MobileQuickMenu";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Navigasi Utama */}
-      <Header />
+    // Mengubah bg-background menjadi bg-transparent agar menyatu dengan website utama saat di-embed
+    <div className="min-h-screen flex flex-col bg-transparent">
+      {/* Header bawaan dihapus agar tidak bentrok dengan Header website utama */}
       
       {/* Konten Utama dengan Kontainer Responsif */}
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-4">
         
         {/* Hero Section */}
         <Hero />
         
-        {/* Pembungkus Section dengan Spasi yang Konsisten */}
-        <div className="space-y-16 md:space-y-24 py-8">
+        {/* Pembungkus Section: Spasi (space-y) sedikit dirapatkan agar lebih fit di dalam Iframe */}
+        <div className="space-y-10 md:space-y-16 py-6">
           <ColorPalette />
           <Typography />
           <AssetGallery />
@@ -33,12 +33,12 @@ const Index = () => {
         
       </main>
 
-      {/* Spacer bawah khusus Mobile agar konten tidak tertutup oleh MobileQuickMenu */}
-      <div className="h-20 md:hidden" aria-hidden="true" />
+      {/* Spacer bawah agar konten paling bawah tidak tertutup oleh MobileQuickMenu */}
+      <div className="h-20" aria-hidden="true" />
 
-      <Footer />
+      {/* Footer bawaan dihapus agar mengikuti Footer website utama */}
 
-      {/* Menu Navigasi Cepat Khusus Mobile */}
+      {/* Menu Navigasi Cepat Khusus Mobile (Gaya Mobile App Bottom Bar) */}
       <MobileQuickMenu />
     </div>
   );
