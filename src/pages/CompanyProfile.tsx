@@ -42,20 +42,22 @@ const str = (v: unknown, d = ""): string => (typeof v === "string" ? v : d);
 const arr = (v: unknown): string[] => (Array.isArray(v) ? v.map((x) => String(x)) : []);
 
 const CompanyProfile = () => {
-  const { block, list } = useCmsPage("company-profile");
+  // Pengamanan hook jika useCmsPage belum merespon
+  const { block = () => ({}), list = () => [] } = useCmsPage("company-profile") || {};
 
-  // ===== Pull dari CMS dengan fallback =====
-  const hero = block("hero");
-  const about = block("about");
-  const vm = block("vision_mission");
-  const cta = block("cta");
-  const contact = block("contact");
+  // ===== Pull dari CMS dengan fallback object kosong {} agar tidak crash =====
+  const hero = block("hero") || {};
+  const about = block("about") || {};
+  const vm = block("vision_mission") || {};
+  const cta = block("cta") || {};
+  const contact = block("contact") || {};
 
-  const stats = list("stats");
-  const values = list("values");
-  const programs = list("programs");
-  const milestones = list("timeline");
-  const testimonials = list("testimonials");
+  // ===== Menggunakan fallback array kosong [] agar .map() tidak error =====
+  const stats = list("stats") || [];
+  const values = list("values") || [];
+  const programs = list("programs") || [];
+  const milestones = list("timeline") || [];
+  const testimonials = list("testimonials") || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -118,13 +120,13 @@ const CompanyProfile = () => {
         <div className="container relative -mt-8 sm:-mt-12 md:-mt-16 pb-12 sm:pb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border/50 rounded-2xl overflow-hidden shadow-elegant border border-border/50">
             {stats.map((s) => {
-              const Icon = IconBy(s.content.icon, Award);
+              const Icon = IconBy(s.content?.icon, Award);
               return (
                 <div key={s.id} className="bg-card p-4 sm:p-6 md:p-8 flex flex-col items-center text-center gap-1.5 sm:gap-2">
                   <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent mb-1" />
-                  <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-primary">{str(s.content.value)}</div>
+                  <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-primary">{str(s.content?.value)}</div>
                   <div className="text-[10px] sm:text-xs md:text-sm font-alt uppercase tracking-widest text-muted-foreground leading-tight">
-                    {str(s.content.label)}
+                    {str(s.content?.label)}
                   </div>
                 </div>
               );
@@ -236,7 +238,7 @@ const CompanyProfile = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((v, idx) => {
-              const Icon = IconBy(v.content.icon, ShieldCheck);
+              const Icon = IconBy(v.content?.icon, ShieldCheck);
               return (
                 <div
                   key={v.id}
@@ -249,8 +251,8 @@ const CompanyProfile = () => {
                     <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-bounce">
                       <Icon className="h-5 w-5 text-primary-foreground" />
                     </div>
-                    <h3 className="font-display text-2xl font-bold text-secondary mb-3">{str(v.content.title)}</h3>
-                    <p className="text-sm text-foreground/70 leading-relaxed">{str(v.content.desc)}</p>
+                    <h3 className="font-display text-2xl font-bold text-secondary mb-3">{str(v.content?.title)}</h3>
+                    <p className="text-sm text-foreground/70 leading-relaxed">{str(v.content?.desc)}</p>
                   </div>
                 </div>
               );
@@ -277,7 +279,7 @@ const CompanyProfile = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {programs.map((p) => {
-              const title = str(p.content.title);
+              const title = str(p.content?.title);
               return (
                 <div
                   key={p.id}
@@ -294,14 +296,14 @@ const CompanyProfile = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 to-transparent" />
                     <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-[10px] font-alt font-bold uppercase tracking-widest text-accent-foreground">
-                      <Sparkles className="h-3 w-3" /> {str(p.content.badge)}
+                      <Sparkles className="h-3 w-3" /> {str(p.content?.badge)}
                     </span>
                   </div>
                   <div className="p-7 flex-1 flex flex-col">
                     <h3 className="font-display text-2xl font-bold text-secondary mb-2">{title}</h3>
-                    <p className="text-sm text-foreground/70 leading-relaxed mb-5">{str(p.content.desc)}</p>
+                    <p className="text-sm text-foreground/70 leading-relaxed mb-5">{str(p.content?.desc)}</p>
                     <ul className="space-y-2 mb-6 flex-1">
-                      {arr(p.content.features).map((f) => (
+                      {arr(p.content?.features).map((f) => (
                         <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
                           <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                           {f}
@@ -354,8 +356,8 @@ const CompanyProfile = () => {
                     <div className="absolute left-0 top-1 h-9 w-9 rounded-full bg-card border-2 border-primary flex items-center justify-center shadow-md">
                       <div className="h-2 w-2 rounded-full bg-primary" />
                     </div>
-                    <p className="font-display text-3xl font-bold text-primary mb-1">{str(m.content.year)}</p>
-                    <p className="text-foreground/75 leading-relaxed">{str(m.content.text)}</p>
+                    <p className="font-display text-3xl font-bold text-primary mb-1">{str(m.content?.year)}</p>
+                    <p className="text-foreground/75 leading-relaxed">{str(m.content?.text)}</p>
                   </div>
                 ))}
               </div>
@@ -364,7 +366,7 @@ const CompanyProfile = () => {
         </div>
       </section>
 
-      {/* FASILITAS (statis - tidak via CMS sesuai design lama) */}
+      {/* FASILITAS */}
       <section className="py-16 sm:py-24 md:py-32 bg-secondary text-secondary-foreground relative overflow-hidden">
         <div className="absolute inset-0 arabesque-pattern opacity-20" />
         <div className="container relative">
@@ -433,11 +435,11 @@ const CompanyProfile = () => {
                   ))}
                 </div>
                 <p className="font-display italic text-lg text-foreground/85 leading-relaxed mb-6 flex-1">
-                  "{str(t.content.quote)}"
+                  "{str(t.content?.quote)}"
                 </p>
                 <div className="pt-4 border-t border-border">
-                  <p className="font-display font-bold text-secondary">{str(t.content.name)}</p>
-                  <p className="text-xs font-alt uppercase tracking-widest text-muted-foreground mt-1">{str(t.content.role)}</p>
+                  <p className="font-display font-bold text-secondary">{str(t.content?.name)}</p>
+                  <p className="text-xs font-alt uppercase tracking-widest text-muted-foreground mt-1">{str(t.content?.role)}</p>
                 </div>
               </div>
             ))}
