@@ -8,6 +8,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 
 interface Req { templateId: string }
 
+
+function templatePath(url: string): string | null {
+  const m = url.match(/\/object\/(?:public|sign)\/templates\/([^?]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+async function signTemplate(supabase: any, url: string): Promise<string> {
+  const path = templatePath(url);
+  if (!path) return url;
+  const { data } = await supabase.storage.from("templates").createSignedUrl(path, 3600);
+  return data?.signedUrl ?? url;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
@@ -28,7 +40,7 @@ Deno.serve(async (req) => {
 
     const { data: tpl, error } = await supabase.from("templates").select("*").eq("id", templateId).eq("user_id", user.id).single();
     if (error || !tpl) throw new Error("Template not found");
-    const imageUrl = tpl.preview_url || tpl.file_url;
+    const imageUrl = await signTemplate(supabase, tpl.preview_url || tpl.file_url);
     if (!imageUrl) throw new Error("Template tidak punya preview image");
 
     // ── Brand Kit injection ────────────────────────────────────────────────

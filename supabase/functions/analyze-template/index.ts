@@ -11,6 +11,18 @@ interface AnalyzeRequest {
 
 const SYSTEM = `You are a senior visual design analyst. You will receive a single design reference image (poster/flyer/social media creative) and must produce a structured analysis describing its visual composition. Be precise, concise, and objective. Use Bahasa Indonesia for descriptive fields. Coordinates are normalized 0-1 from the top-left of the image.`;
 
+
+function templatePath(url: string): string | null {
+  const m = url.match(/\/object\/(?:public|sign)\/templates\/([^?]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+async function signTemplate(supabase: any, url: string): Promise<string> {
+  const path = templatePath(url);
+  if (!path) return url;
+  const { data } = await supabase.storage.from("templates").createSignedUrl(path, 3600);
+  return data?.signedUrl ?? url;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -56,7 +68,7 @@ Deno.serve(async (req) => {
 
     await supabase.from("templates").update({ status: "analyzing" }).eq("id", templateId);
 
-    const previewUrl = tpl.preview_url || tpl.file_url;
+    const previewUrl = await signTemplate(supabase, tpl.preview_url || tpl.file_url);
 
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

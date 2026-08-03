@@ -21,6 +21,8 @@ import logo from "@/assets/karin-logo.png";
 import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 import GraphicCreatorDialog from "@/components/brand/GraphicCreatorDialog";
 import { useAssetCategories, type AssetCategory } from "@/hooks/useAssetCategories";
+import { TemplateImage } from "@/components/studio/TemplateImage";
+import { signTemplateUrl } from "@/lib/templateStorage";
 
 type CategoryKey = string;
 
@@ -222,7 +224,7 @@ const Assets = () => {
         media_type: selectedCategory.key,
         input_data: inputData as unknown as Record<string, never>,
         template_id: selectedTpl.id,
-        background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
+        background_image_url: (await signTemplateUrl(selectedTpl.preview_url || selectedTpl.file_url, 60 * 60 * 24 * 7)) || undefined,
         status: "draft",
       }]).select().single();
 
@@ -394,7 +396,7 @@ const Assets = () => {
                     >
                       <div className="aspect-[4/5] bg-muted">
                         {t.preview_url ? (
-                          <img src={t.preview_url} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
+                          <TemplateImage url={t.preview_url} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <FileImage className="h-8 w-8 text-muted-foreground/40" />
@@ -455,7 +457,7 @@ const Assets = () => {
                 <Card className="overflow-hidden">
                   <div className="aspect-[4/5] bg-muted">
                     {selectedTpl.preview_url ? (
-                      <img src={selectedTpl.preview_url} alt={selectedTpl.name} className="w-full h-full object-cover" />
+                      <TemplateImage url={selectedTpl.preview_url} alt={selectedTpl.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <FileImage className="h-12 w-12 text-muted-foreground/40" />
