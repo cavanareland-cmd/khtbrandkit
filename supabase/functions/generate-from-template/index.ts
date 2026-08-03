@@ -35,6 +35,18 @@ const ASPECT: Record<string, string> = {
   banner_landscape: "16:9 landscape",
 };
 
+
+function templatePath(url: string): string | null {
+  const m = url.match(/\/object\/(?:public|sign)\/templates\/([^?]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+async function signTemplate(supabase: any, url: string): Promise<string> {
+  const path = templatePath(url);
+  if (!path) return url;
+  const { data } = await supabase.storage.from("templates").createSignedUrl(path, 60 * 60 * 24 * 7);
+  return data?.signedUrl ?? url;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -102,7 +114,7 @@ Deno.serve(async (req) => {
               role: "user",
               content: [
                 { type: "text", text: `Generate background image inspired by this reference, restyled for KHT brand. ${visualPrompt}` },
-                { type: "image_url", image_url: { url: tpl.preview_url || tpl.file_url } },
+                { type: "image_url", image_url: { url: await signTemplate(supabase, tpl.preview_url || tpl.file_url) } },
               ],
             },
           ],
@@ -136,7 +148,7 @@ Deno.serve(async (req) => {
       backgroundUrl = supabase.storage.from("creations").getPublicUrl(filePath).data.publicUrl;
     } else {
       // extract mode: use original template as background
-      backgroundUrl = tpl.preview_url || tpl.file_url;
+      backgroundUrl = await signTemplate(supabase, tpl.preview_url || tpl.file_url);
     }
 
     // ===== Build element layers from regions =====
