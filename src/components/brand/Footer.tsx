@@ -53,7 +53,7 @@ const Footer = () => {
 
       <div className="mt-12 pt-8 border-t border-secondary-glow/30 flex flex-col md:flex-row justify-between gap-4 items-center">
         <p className="text-xs text-secondary-foreground/50 font-alt">
-          © {new Date().getFullYear()} PT Karin Hidayah Tour. All rights reserved.
+          © {new Date().getFullYear()} PT {brand.brandName}. All rights reserved.
         </p>
         <p className="text-xs text-secondary-foreground/50 font-display italic">
           "Labbaik Allahumma Labbaik"
@@ -61,6 +61,8 @@ const Footer = () => {
       </div>
     </div>
   </footer>
-);
+  );
+};
+
 
 export default Footer;
