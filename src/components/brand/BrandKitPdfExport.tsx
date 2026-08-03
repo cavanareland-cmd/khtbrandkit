@@ -18,6 +18,8 @@ async function toDataUrl(src: string): Promise<string | null> {
     const res = await fetch(src);
     if (!res.ok) return null;
     const blob = await res.blob();
+    if (!blob.type.startsWith("image/")) return null;
+
     return await new Promise((resolve) => {
       const r = new FileReader();
       r.onloadend = () => resolve(r.result as string);
