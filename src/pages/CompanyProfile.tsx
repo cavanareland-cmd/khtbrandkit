@@ -26,6 +26,7 @@ import jamaah from "@/assets/company-jamaah.jpg";
 import hotelImg from "@/assets/company-hotel.jpg";
 import ExportProfile from "@/components/brand/ExportProfile";
 import { useCmsPage } from "@/hooks/useCmsSections";
+import Footer from "@/components/brand/Footer";
 
 // ===== ICON MAP (untuk konten dari CMS) =====
 const ICONS: Record<string, LucideIcon> = {
@@ -41,7 +42,9 @@ const arr = (v: unknown): string[] => (Array.isArray(v) ? v.map((x) => String(x)
 
 const CompanyProfile = () => {
   // Pengamanan hook jika useCmsPage belum merespon
-  const { block = () => ({}), list = () => [] } = useCmsPage("company-profile") || {};
+  const cms = useCmsPage("company-profile");
+  const block = (k: string, b = "main"): Record<string, unknown> => cms?.block?.(k, b) ?? {};
+  const list = (k: string) => cms?.list?.(k) ?? [];
 
   // ===== Pull dari CMS dengan fallback object kosong {} agar tidak crash =====
   const hero = block("hero") || {};
