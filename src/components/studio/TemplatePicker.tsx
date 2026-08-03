@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Upload, FileImage, Trash2, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { TemplateImage } from "@/components/studio/TemplateImage";
 
 interface TemplateRow {
   id: string;
@@ -198,7 +199,7 @@ export default function TemplatePicker({ selectedId, onSelect }: Props) {
               onClick={() => onSelect(t)}
             >
               {t.preview_url ? (
-                <img src={t.preview_url} alt={t.name} className="w-full h-24 object-cover" />
+                <TemplateImage url={t.preview_url} alt={t.name} className="w-full h-24 object-cover" />
               ) : (
                 <div className="w-full h-24 bg-muted flex items-center justify-center text-xs text-muted-foreground">
                   <FileImage className="w-6 h-6" />

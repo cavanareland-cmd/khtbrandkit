@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TemplateImage } from "@/components/studio/TemplateImage";
 
 type TemplateRow = {
   id: string;
@@ -77,7 +78,7 @@ const TemplatesAdmin = () => {
                 <TableCell>
                   <div className="h-12 w-12 rounded bg-muted overflow-hidden">
                     {t.preview_url || t.file_url ? (
-                      <img src={t.preview_url || t.file_url} alt={t.name} className="h-full w-full object-cover" />
+                      <TemplateImage url={t.preview_url || t.file_url} alt={t.name} className="h-full w-full object-cover" />
                     ) : null}
                   </div>
                 </TableCell>

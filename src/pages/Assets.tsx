@@ -21,6 +21,7 @@ import logo from "@/assets/karin-logo.png";
 import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 import GraphicCreatorDialog from "@/components/brand/GraphicCreatorDialog";
 import { useAssetCategories, type AssetCategory } from "@/hooks/useAssetCategories";
+import { TemplateImage } from "@/components/studio/TemplateImage";
 
 type CategoryKey = string;
 
@@ -394,7 +395,7 @@ const Assets = () => {
                     >
                       <div className="aspect-[4/5] bg-muted">
                         {t.preview_url ? (
-                          <img src={t.preview_url} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
+                          <TemplateImage url={t.preview_url} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <FileImage className="h-8 w-8 text-muted-foreground/40" />
@@ -455,7 +456,7 @@ const Assets = () => {
                 <Card className="overflow-hidden">
                   <div className="aspect-[4/5] bg-muted">
                     {selectedTpl.preview_url ? (
-                      <img src={selectedTpl.preview_url} alt={selectedTpl.name} className="w-full h-full object-cover" />
+                      <TemplateImage url={selectedTpl.preview_url} alt={selectedTpl.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <FileImage className="h-12 w-12 text-muted-foreground/40" />
