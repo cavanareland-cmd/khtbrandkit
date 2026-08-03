@@ -87,7 +87,9 @@ const BrandKitPdfExport = ({ className = "" }: { className?: string }) => {
       let y = M;
 
       const footer = (page: number) => {
+        if (page === 1) return; // cover has no footer
         doc.setFont("helvetica", "normal");
+
         doc.setFontSize(8);
         doc.setTextColor(...MUTED);
         doc.text(`${brandName} · Brand Kit`, M, H - 10);
