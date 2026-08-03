@@ -1,10 +1,14 @@
-import logo from "@/assets/karin-logo.png";
+import fallbackLogo from "@/assets/karin-logo.png";
 import { Link } from "react-router-dom";
 import { Sparkles, LayoutDashboard, FileImage } from "lucide-react";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useBrandIdentity } from "@/hooks/useBrandIdentity";
 
 const Header = () => {
   const { isAuthed } = useAuthSession();
+  const brand = useBrandIdentity();
+  const logo = brand.logoUrl || brand.lockupUrl || fallbackLogo;
+
   const links = [
     { label: "Identitas", href: "#hero" },
     { label: "Warna", href: "#colors" },
