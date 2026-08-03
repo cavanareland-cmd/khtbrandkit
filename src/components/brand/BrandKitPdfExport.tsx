@@ -266,13 +266,22 @@ const BrandKitPdfExport = ({ className = "" }: { className?: string }) => {
           doc.setLineWidth(0.3);
           doc.roundedRect(x, top, cell, cell, 2, 2, "S");
           const img = await toDataUrl(asset.image_url);
+          let drawn = false;
           if (img) {
             try {
               doc.addImage(img, "PNG", x + 4, top + 4, cell - 8, cell - 8, undefined, "FAST");
+              drawn = true;
             } catch {
-              /* skip */
+              drawn = false;
             }
           }
+          if (!drawn) {
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(8);
+            doc.setTextColor(...MUTED);
+            doc.text("Pratinjau tidak tersedia", x + cell / 2, top + cell / 2, { align: "center" });
+          }
+
           doc.setFont("helvetica", "bold");
           doc.setFontSize(8.5);
           doc.setTextColor(...INK);
