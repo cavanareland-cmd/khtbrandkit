@@ -72,6 +72,7 @@ export default {
         display: ['"Playfair Display"', 'serif'],
         body: ['Inter', 'sans-serif'],
         alt: ['Montserrat', 'sans-serif'],
+        wordmark: ['"Libre Baskerville"', 'Georgia', 'serif'],
       },
       keyframes: {
         "accordion-down": {
