@@ -22,7 +22,7 @@ const Header = () => {
             <img src={logo} alt="Karin Hidayah Tour" className="h-11 w-11 transition-smooth group-hover:scale-105" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-display text-lg font-bold text-primary tracking-tight">Karin Hidayah Tour</span>
+            <span className="font-wordmark text-base font-bold text-secondary tracking-tight">Karin Hidayah Tour</span>
             <span className="text-[10px] font-alt uppercase tracking-[0.2em] text-secondary/70">Brand Kit · v1.0</span>
           </div>
         </a>

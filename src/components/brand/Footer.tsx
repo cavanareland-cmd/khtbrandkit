@@ -9,7 +9,7 @@ const Footer = () => (
           <div className="flex items-center gap-3">
             <img src={logo} alt="KHT" className="h-12 w-12 brightness-0 invert" />
             <div>
-              <p className="font-display text-xl font-bold">Karin Hidayah Tour</p>
+              <p className="font-wordmark text-lg font-bold">Karin Hidayah Tour</p>
               <p className="text-xs font-alt uppercase tracking-widest text-secondary-foreground/60">Brand Kit · v1.0</p>
             </div>
           </div>
