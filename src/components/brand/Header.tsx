@@ -23,11 +23,12 @@ const Header = () => {
       <div className="container flex h-20 items-center justify-between">
         <a href="#hero" className="flex items-center gap-3 group">
           <div className="relative">
-            <img src={logo} alt="Karin Hidayah Tour" className="h-11 w-11 transition-smooth group-hover:scale-105" />
+            <img src={logo} alt={brand.brandName} className="h-11 w-11 object-contain transition-smooth group-hover:scale-105" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-wordmark text-base font-bold text-secondary tracking-tight">Karin Hidayah Tour</span>
-            <span className="text-[10px] font-alt uppercase tracking-[0.2em] text-secondary/70">Brand Kit · v1.0</span>
+            <span className="font-wordmark text-base font-bold text-secondary tracking-tight">{brand.brandName}</span>
+            <span className="text-[10px] font-alt uppercase tracking-[0.2em] text-secondary/70">{brand.categoryLabel}</span>
+
           </div>
         </a>
         <nav className="hidden md:flex items-center gap-1">
