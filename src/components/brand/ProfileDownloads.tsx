@@ -3,6 +3,8 @@ import { FileText, FolderArchive, Presentation, Download, FileCheck } from "luci
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import EditButton from "./admin/EditButton";
+import BrandKitPdfExport from "./BrandKitPdfExport";
+
 
 const ProfileDownloads = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -53,9 +55,11 @@ const ProfileDownloads = () => {
               Unduh aset resmi **Karin Hidayah Tour** dalam berbagai format untuk kebutuhan presentasi dan publikasi.
             </p>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0 flex flex-wrap items-center gap-3">
+            <BrandKitPdfExport />
             <EditButton onClick={() => setIsEditing(true)} label="Edit Aset" />
           </div>
+
         </div>
 
         {/* Download Grid */}
