@@ -74,7 +74,10 @@ const BrandKitPdfExport = ({ className = "" }: { className?: string }) => {
       const lockup = logos.find((l) => typeof l.image_url === "string" && l.image_url) as
         | Record<string, string>
         | undefined;
-      const coverLogo = (await toDataUrl((lockup?.image_url as string) || fallbackLogo)) ?? null;
+      const coverLogo =
+        (lockup?.image_url ? await toDataUrl(lockup.image_url as string) : null) ??
+        (await toDataUrl(fallbackLogo));
+
 
       const { default: jsPDF } = await import("jspdf");
       const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
