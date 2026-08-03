@@ -1,16 +1,23 @@
-import logo from "@/assets/karin-logo.png";
+import fallbackLogo from "@/assets/karin-logo.png";
+import { useBrandIdentity } from "@/hooks/useBrandIdentity";
 
-const Footer = () => (
+const Footer = () => {
+  const brand = useBrandIdentity();
+  const logo = brand.logoInverseUrl || brand.logoUrl || fallbackLogo;
+  const invertClass = brand.logoInverseUrl ? "" : "brightness-0 invert";
+
+  return (
   <footer className="bg-secondary text-secondary-foreground relative overflow-hidden">
     <div className="absolute inset-0 arabesque-pattern opacity-30" />
     <div className="container relative py-16">
       <div className="grid md:grid-cols-3 gap-10 items-start">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="KHT" className="h-12 w-12 brightness-0 invert" />
+            <img src={logo} alt={brand.brandShort} className={`h-12 w-12 object-contain ${invertClass}`} />
             <div>
-              <p className="font-wordmark text-lg font-bold">Karin Hidayah Tour</p>
-              <p className="text-xs font-alt uppercase tracking-widest text-secondary-foreground/60">Brand Kit · v1.0</p>
+              <p className="font-wordmark text-lg font-bold">{brand.brandName}</p>
+              <p className="text-xs font-alt uppercase tracking-widest text-secondary-foreground/60">{brand.categoryLabel}</p>
+
             </div>
           </div>
           <p className="text-sm text-secondary-foreground/70 max-w-sm leading-relaxed">
