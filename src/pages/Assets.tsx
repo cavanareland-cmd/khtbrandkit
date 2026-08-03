@@ -22,6 +22,7 @@ import IconCreatorDialog from "@/components/brand/IconCreatorDialog";
 import GraphicCreatorDialog from "@/components/brand/GraphicCreatorDialog";
 import { useAssetCategories, type AssetCategory } from "@/hooks/useAssetCategories";
 import { TemplateImage } from "@/components/studio/TemplateImage";
+import { signTemplateUrl } from "@/lib/templateStorage";
 
 type CategoryKey = string;
 
@@ -223,7 +224,7 @@ const Assets = () => {
         media_type: selectedCategory.key,
         input_data: inputData as unknown as Record<string, never>,
         template_id: selectedTpl.id,
-        background_image_url: selectedTpl.preview_url || selectedTpl.file_url || undefined,
+        background_image_url: (await signTemplateUrl(selectedTpl.preview_url || selectedTpl.file_url, 60 * 60 * 24 * 7)) || undefined,
         status: "draft",
       }]).select().single();
 

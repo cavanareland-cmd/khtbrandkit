@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, FileText, LayoutTemplate, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TemplateImage } from "@/components/studio/TemplateImage";
 
 type TplBrief = {
   id: string;
@@ -115,7 +116,7 @@ function BriefCard({ thumb, title, subtitle, brief, updated, href }: {
     <Card className="p-4 space-y-3">
       <div className="flex gap-3">
         {thumb ? (
-          <img src={thumb} alt="" className="w-20 h-20 object-cover rounded border border-border shrink-0" />
+          <TemplateImage url={thumb} alt="" className="w-20 h-20 object-cover rounded border border-border shrink-0" />
         ) : (
           <div className="w-20 h-20 rounded border border-border bg-muted flex items-center justify-center shrink-0">
             <Sparkles className="h-5 w-5 text-muted-foreground" />
