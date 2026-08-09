@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import fallbackLogo from "@/assets/karin-logo.png";
-import lockupLogo from "@/assets/karin-logo-lockup.png";
+import lockupAsset from "@/assets/karin-logo-lockup.png.asset.json";
 
 type Row = { section: string; key: string | null; data: Record<string, unknown>; sort_order: number };
 
@@ -54,9 +54,16 @@ async function loadImage(src: string): Promise<LoadedImage | null> {
   return result;
 }
 
-/** Remote lockup URLs can be unavailable (dev/offline); fall back to the bundled file. */
-async function loadWithFallback(src: string | undefined, fallback: string) {
-  return (src ? await loadImage(src) : null) ?? (await loadImage(fallback));
+const LOCKUP_URL = (lockupAsset as { url: string }).url;
+
+/** Remote lockup URLs can be unavailable (dev/offline); fall back to known-good sources. */
+async function loadWithFallback(...sources: (string | undefined)[]) {
+  for (const src of sources) {
+    if (!src) continue;
+    const img = await loadImage(src);
+    if (img) return img;
+  }
+  return null;
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -113,7 +120,7 @@ const BrandKitPdfExport = ({ className = "" }: { className?: string }) => {
 
       const lockupRow = logoRows.find((r) => r.key === "logo_lockup");
       const lockupUrl = lockupRow ? String((lockupRow.data as Record<string, unknown>).image_url ?? "") : "";
-      const coverImage = await loadWithFallback(lockupUrl || undefined, lockupLogo);
+      const coverImage = await loadWithFallback(lockupUrl, LOCKUP_URL, fallbackLogo);
       const markImage = await loadImage(fallbackLogo);
 
       const { default: jsPDF } = await import("jspdf");
@@ -367,7 +374,7 @@ const BrandKitPdfExport = ({ className = "" }: { className?: string }) => {
 
           const isLockup = asset.title === lockupRow?.data?.["title"];
           const img = isLockup
-            ? await loadWithFallback(asset.image_url, lockupLogo)
+            ? await loadWithFallback(asset.image_url, LOCKUP_URL, fallbackLogo)
             : await loadImage(asset.image_url);
           let drawn = false;
           if (img) {
