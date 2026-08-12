@@ -67,23 +67,6 @@ const MobileQuickMenu = () => {
         </div>
       </div>
 
-      {/* icon grid */}
-      <div className="mt-4 md:mt-6 grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
-        {GRID.map((g) => (
-          <Link
-            key={g.label}
-            to={g.to}
-            className="flex flex-col items-center gap-1.5 md:gap-2 group"
-          >
-            <span
-              className={`h-14 w-14 md:h-16 md:w-16 rounded-2xl ${g.bg} ${g.fg} flex items-center justify-center shadow-sm group-active:scale-95 group-hover:scale-105 transition-transform`}
-            >
-              <g.icon className="h-6 w-6 md:h-7 md:w-7" />
-            </span>
-            <span className="text-[10px] md:text-xs text-foreground/75 text-center leading-tight">{g.label}</span>
-          </Link>
-        ))}
-      </div>
     </section>
   );
 };
