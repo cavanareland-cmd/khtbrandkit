@@ -36,13 +36,7 @@ const Index = () => {
         
       </main>
 
-      {/* Spacer bawah agar konten paling bawah tidak tertutup oleh MobileQuickMenu */}
-      <div className="h-20" aria-hidden="true" />
-
-      {/* Footer bawaan dihapus agar mengikuti Footer website utama */}
-
-      {/* Menu Navigasi Cepat Khusus Mobile (Gaya Mobile App Bottom Bar) */}
-      <MobileQuickMenu />
+      <div className="h-8" aria-hidden="true" />
     </div>
   );
 };
