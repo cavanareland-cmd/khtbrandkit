@@ -1,19 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  Sparkles,
-  LayoutTemplate,
-  Image as ImageIcon,
-  Palette,
-  Type,
-  Megaphone,
-  Building2,
-  FolderHeart,
-  Wand2,
-  Plus,
-  Phone,
-  Shield, // Tambahan ikon untuk Admin
-  type LucideIcon,
-} from "lucide-react";
+import { FolderHeart, Wand2, Plus, type LucideIcon } from "lucide-react";
 
 type Tile = {
   to: string;
@@ -26,17 +12,6 @@ const TOP: Tile[] = [
   { to: "/studio", label: "Studio", icon: Plus, tone: "primary" },
   { to: "/assets", label: "Buat Aset", icon: Wand2, tone: "accent" },
   { to: "/gallery", label: "Galeri", icon: FolderHeart, tone: "secondary" },
-];
-
-const GRID: { to: string; label: string; icon: LucideIcon; bg: string; fg: string }[] = [
-  { to: "/assets", label: "Template", icon: LayoutTemplate, bg: "bg-rose-100", fg: "text-rose-600" },
-  { to: "/assets", label: "Media", icon: ImageIcon, bg: "bg-amber-100", fg: "text-amber-600" },
-  { to: "/", label: "Warna", icon: Palette, bg: "bg-pink-100", fg: "text-pink-600" },
-  { to: "/", label: "Font", icon: Type, bg: "bg-emerald-100", fg: "text-emerald-600" },
-  { to: "/studio", label: "Promo", icon: Megaphone, bg: "bg-sky-100", fg: "text-sky-600" },
-  { to: "/company-profile", label: "Profil", icon: Building2, bg: "bg-violet-100", fg: "text-violet-600" },
-  { to: "/admin", label: "Admin", icon: Shield, bg: "bg-orange-100", fg: "text-orange-600" },
-  { to: "/company-profile#contact", label: "Kontak", icon: Phone, bg: "bg-slate-100", fg: "text-slate-600" },
 ];
 
 const toneClass: Record<Tile["tone"], string> = {
@@ -67,23 +42,6 @@ const MobileQuickMenu = () => {
         </div>
       </div>
 
-      {/* icon grid */}
-      <div className="mt-4 md:mt-6 grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
-        {GRID.map((g) => (
-          <Link
-            key={g.label}
-            to={g.to}
-            className="flex flex-col items-center gap-1.5 md:gap-2 group"
-          >
-            <span
-              className={`h-14 w-14 md:h-16 md:w-16 rounded-2xl ${g.bg} ${g.fg} flex items-center justify-center shadow-sm group-active:scale-95 group-hover:scale-105 transition-transform`}
-            >
-              <g.icon className="h-6 w-6 md:h-7 md:w-7" />
-            </span>
-            <span className="text-[10px] md:text-xs text-foreground/75 text-center leading-tight">{g.label}</span>
-          </Link>
-        ))}
-      </div>
     </section>
   );
 };
