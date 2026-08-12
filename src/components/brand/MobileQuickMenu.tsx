@@ -1,5 +1,16 @@
 import { Link } from "react-router-dom";
-import { FolderHeart, Wand2, Plus, type LucideIcon } from "lucide-react";
+import {
+  FolderHeart,
+  Wand2,
+  Plus,
+  Sparkles,
+  LayoutTemplate,
+  Palette,
+  Image,
+  FileText,
+  Type,
+  type LucideIcon,
+} from "lucide-react";
 
 type Tile = {
   to: string;
@@ -19,6 +30,25 @@ const toneClass: Record<Tile["tone"], string> = {
   accent: "bg-accent text-accent-foreground",
   secondary: "bg-secondary text-secondary-foreground",
 };
+
+type QuickItem = {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  bg: string;
+  iconColor: string;
+};
+
+const GRID: QuickItem[] = [
+  { to: "/studio", label: "AI Studio", icon: Sparkles, bg: "bg-rose-100", iconColor: "text-rose-600" },
+  { to: "/assets", label: "Template", icon: LayoutTemplate, bg: "bg-sky-100", iconColor: "text-sky-600" },
+  { to: "/company-profile", label: "Brand Kit", icon: Palette, bg: "bg-amber-100", iconColor: "text-amber-600" },
+  { to: "/gallery", label: "Media", icon: Image, bg: "bg-emerald-100", iconColor: "text-emerald-600" },
+  { to: "/assets", label: "Brief", icon: FileText, bg: "bg-violet-100", iconColor: "text-violet-600" },
+  { to: "/company-profile", label: "Tipografi", icon: Type, bg: "bg-cyan-100", iconColor: "text-cyan-600" },
+  { to: "/studio", label: "Poster", icon: LayoutTemplate, bg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
+  { to: "/assets", label: "Icon", icon: Sparkles, bg: "bg-lime-100", iconColor: "text-lime-600" },
+];
 
 const MobileQuickMenu = () => {
   return (
@@ -42,6 +72,25 @@ const MobileQuickMenu = () => {
         </div>
       </div>
 
+      {/* Quick icon grid — satu lokasi, di bawah 3 kartu utama */}
+      <div className="mt-4 md:mt-6">
+        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
+          {GRID.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="flex flex-col items-center gap-2 rounded-2xl p-3 md:p-4 bg-card shadow-sm border border-border/50 hover:shadow-md hover:scale-[1.02] transition-smooth"
+            >
+              <span className={`h-10 w-10 md:h-12 md:w-12 rounded-xl ${item.bg} flex items-center justify-center`}>
+                <item.icon className={`h-5 w-5 md:h-6 md:w-6 ${item.iconColor}`} />
+              </span>
+              <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight">
+                {item.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
