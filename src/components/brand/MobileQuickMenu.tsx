@@ -72,6 +72,25 @@ const MobileQuickMenu = () => {
         </div>
       </div>
 
+      {/* Quick icon grid — satu lokasi, di bawah 3 kartu utama */}
+      <div className="mt-4 md:mt-6">
+        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
+          {GRID.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="flex flex-col items-center gap-2 rounded-2xl p-3 md:p-4 bg-card shadow-sm border border-border/50 hover:shadow-md hover:scale-[1.02] transition-smooth"
+            >
+              <span className={`h-10 w-10 md:h-12 md:w-12 rounded-xl ${item.bg} flex items-center justify-center`}>
+                <item.icon className={`h-5 w-5 md:h-6 md:w-6 ${item.iconColor}`} />
+              </span>
+              <span className="text-[10px] md:text-xs font-medium text-foreground text-center leading-tight">
+                {item.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
