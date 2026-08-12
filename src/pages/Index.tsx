@@ -16,7 +16,10 @@ const Index = () => {
       
       {/* Konten Utama dengan Kontainer Responsif */}
       <main className="flex-grow w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pt-4">
-        
+
+        {/* Menu Navigasi Cepat (semua ukuran layar) */}
+        <MobileQuickMenu />
+
         {/* Hero Section */}
         <Hero />
         
