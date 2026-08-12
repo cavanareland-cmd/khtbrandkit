@@ -31,6 +31,25 @@ const toneClass: Record<Tile["tone"], string> = {
   secondary: "bg-secondary text-secondary-foreground",
 };
 
+type QuickItem = {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  bg: string;
+  iconColor: string;
+};
+
+const GRID: QuickItem[] = [
+  { to: "/studio", label: "AI Studio", icon: Sparkles, bg: "bg-rose-100", iconColor: "text-rose-600" },
+  { to: "/assets", label: "Template", icon: LayoutTemplate, bg: "bg-sky-100", iconColor: "text-sky-600" },
+  { to: "/company-profile", label: "Brand Kit", icon: Palette, bg: "bg-amber-100", iconColor: "text-amber-600" },
+  { to: "/gallery", label: "Media", icon: Image, bg: "bg-emerald-100", iconColor: "text-emerald-600" },
+  { to: "/assets", label: "Brief", icon: FileText, bg: "bg-violet-100", iconColor: "text-violet-600" },
+  { to: "/company-profile", label: "Tipografi", icon: Type, bg: "bg-cyan-100", iconColor: "text-cyan-600" },
+  { to: "/studio", label: "Poster", icon: LayoutTemplate, bg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
+  { to: "/assets", label: "Icon", icon: Sparkles, bg: "bg-lime-100", iconColor: "text-lime-600" },
+];
+
 const MobileQuickMenu = () => {
   return (
     <section className="px-4 sm:px-0 pt-4 pb-2">
