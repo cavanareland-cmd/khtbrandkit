@@ -47,40 +47,40 @@ const toneClass: Record<Tile["tone"], string> = {
 
 const MobileQuickMenu = () => {
   return (
-    <section className="md:hidden px-4 pt-4 pb-2">
+    <section className="px-4 sm:px-0 pt-4 pb-2">
       {/* Top highlighted card */}
-      <div className="rounded-3xl bg-gradient-hero p-4 shadow-elegant relative overflow-hidden">
+      <div className="rounded-3xl bg-gradient-hero p-4 md:p-6 shadow-elegant relative overflow-hidden">
         <div className="absolute inset-0 arabesque-pattern opacity-20" />
-        <div className="relative grid grid-cols-3 gap-3">
+        <div className="relative grid grid-cols-3 gap-3 md:gap-5">
           {TOP.map((t) => (
             <Link
               key={t.label}
               to={t.to}
-              className="flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-secondary-foreground/10 backdrop-blur-sm py-3 hover:bg-secondary-foreground/20 transition-smooth"
+              className="flex flex-col items-center justify-center gap-1.5 md:gap-2 rounded-2xl bg-secondary-foreground/10 backdrop-blur-sm py-3 md:py-5 hover:bg-secondary-foreground/20 transition-smooth"
             >
-              <span className={`h-9 w-9 rounded-full flex items-center justify-center shadow-md ${toneClass[t.tone]}`}>
-                <t.icon className="h-4 w-4" />
+              <span className={`h-9 w-9 md:h-12 md:w-12 rounded-full flex items-center justify-center shadow-md ${toneClass[t.tone]}`}>
+                <t.icon className="h-4 w-4 md:h-5 md:w-5" />
               </span>
-              <span className="text-[11px] font-medium text-secondary-foreground">{t.label}</span>
+              <span className="text-[11px] md:text-sm font-medium text-secondary-foreground">{t.label}</span>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* 4-col icon grid */}
-      <div className="mt-4 grid grid-cols-4 gap-3">
+      {/* icon grid */}
+      <div className="mt-4 md:mt-6 grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
         {GRID.map((g) => (
           <Link
             key={g.label}
             to={g.to}
-            className="flex flex-col items-center gap-1.5 group"
+            className="flex flex-col items-center gap-1.5 md:gap-2 group"
           >
             <span
-              className={`h-14 w-14 rounded-2xl ${g.bg} ${g.fg} flex items-center justify-center shadow-sm group-active:scale-95 transition-transform`}
+              className={`h-14 w-14 md:h-16 md:w-16 rounded-2xl ${g.bg} ${g.fg} flex items-center justify-center shadow-sm group-active:scale-95 group-hover:scale-105 transition-transform`}
             >
-              <g.icon className="h-6 w-6" />
+              <g.icon className="h-6 w-6 md:h-7 md:w-7" />
             </span>
-            <span className="text-[10px] text-foreground/75 text-center leading-tight">{g.label}</span>
+            <span className="text-[10px] md:text-xs text-foreground/75 text-center leading-tight">{g.label}</span>
           </Link>
         ))}
       </div>
