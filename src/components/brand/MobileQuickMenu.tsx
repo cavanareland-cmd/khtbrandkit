@@ -1,5 +1,16 @@
 import { Link } from "react-router-dom";
-import { FolderHeart, Wand2, Plus, type LucideIcon } from "lucide-react";
+import {
+  FolderHeart,
+  Wand2,
+  Plus,
+  Sparkles,
+  LayoutTemplate,
+  Palette,
+  Image,
+  FileText,
+  Type,
+  type LucideIcon,
+} from "lucide-react";
 
 type Tile = {
   to: string;
