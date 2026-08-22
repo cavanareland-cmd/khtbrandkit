@@ -14,6 +14,20 @@ const FALLBACK_SUPABASE_PROJECT_ID = "qfyvslzhspjzvwhjlggr";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
+  const missing = [
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_PROJECT_ID",
+  ].filter((k) => !env[k]);
+  if (missing.length) {
+    console.warn(
+      `[env] Missing ${missing.join(", ")} — using built-in publishable fallback. ` +
+        `Set them in Vercel → Settings → Environment Variables to remove the fallback.`,
+    );
+  }
+
+
+
   return {
     server: {
       host: "::",

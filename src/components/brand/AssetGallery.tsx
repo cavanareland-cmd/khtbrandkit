@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import defaultLogo from "@/assets/karin-logo.png";
 import { Download, Plane, Building2, Bus, Compass, BookOpen, MapPin, Star, Camera, Globe, Hotel, Shield } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -6,10 +6,13 @@ import { toast } from "sonner";
 import { useBrandKit } from "@/hooks/useBrandKit";
 import EditButton from "./admin/EditButton";
 import AssetEditor from "./admin/AssetEditor";
+import {
+  assetFilename,
+  downloadFromUrl,
+  downloadRasterAsSvg,
+  downloadSvgElement,
+} from "@/lib/downloadAsset";
 
-const handleDownload = (name: string) => {
-  toast.success(`Download ${name}`, { description: "Placeholder — file akan diunduh." });
-};
 
 const KaabaIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
